@@ -131,6 +131,43 @@
       display: flex;
     }
 
+    .team-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--glass-border);
+      border-radius: 40px;
+      padding: 4px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      margin-bottom: 2px;
+    }
+
+    .team-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+    }
+
+    .team-tab-btn:hover {
+      color: #fff;
+    }
+
+    .team-tab-btn.active {
+      background: linear-gradient(135deg, var(--red) 0%, #b81d30 100%);
+      color: #fff;
+      box-shadow: 0 4px 14px var(--red-glow);
+    }
+
     .team-badge-preview {
       display: flex;
       align-items: center;
@@ -639,6 +676,13 @@
 
   <!-- ─── Start Screen (Ready to Scan) ─── -->
   <div id="start-screen">
+    <!-- Team Member Selector Tabs -->
+    <div class="team-tabs">
+      <button class="team-tab-btn active" data-user="siddharth" onclick="selectUser('siddharth')">Siddharth</button>
+      <button class="team-tab-btn" data-user="mayuri" onclick="selectUser('mayuri')">Mayuri</button>
+      <button class="team-tab-btn" data-user="vrishti" onclick="selectUser('vrishti')">Vrishti</button>
+    </div>
+
     <!-- Active User Preview Card -->
     <div class="team-badge-preview">
       <img id="start-avatar" class="badge-avatar" src="siddharth.jpg" alt="Team Member" />
@@ -777,20 +821,23 @@
     };
 
     // ─── 2. Parse URL & Resolve Active Profile ──────────────────────────────
-    function getActiveUser() {
+    function getActiveUserId() {
       const urlParams = new URLSearchParams(window.location.search);
       const userId = (urlParams.get('user') || '').toLowerCase().trim();
       if (userId && teamData[userId]) {
-        return teamData[userId];
+        return userId;
       }
-      return teamData['siddharth'];
+      return 'siddharth';
     }
 
-    const activeUser = getActiveUser();
-    const cleanPhone = (activeUser.phone || '').replace(/\s+/g, '');
+    let currentUserId = getActiveUserId();
+    let activeUser = teamData[currentUserId];
+    let activeProfileBannerRedraw = null;
 
     // ─── 3. Inject Profile Data into DOM UI ──────────────────────────────────
     function updateDOMUI() {
+      const cleanPhone = (activeUser.phone || '').replace(/\s+/g, '');
+
       // Start Screen preview
       document.getElementById('start-avatar').src = activeUser.photo;
       document.getElementById('start-name').textContent = activeUser.name;
@@ -806,6 +853,26 @@
       document.getElementById('dock-btn-call').href = `tel:${cleanPhone}`;
       document.getElementById('dock-btn-email').href = `mailto:${activeUser.email}`;
       document.getElementById('dock-btn-linkedin').href = activeUser.linkedin;
+
+      // Update active tab button
+      document.querySelectorAll('.team-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.user === currentUserId);
+      });
+    }
+
+    function selectUser(userId) {
+      if (!teamData[userId]) return;
+      currentUserId = userId;
+      activeUser = teamData[userId];
+      updateDOMUI();
+      if (activeProfileBannerRedraw) {
+        activeProfileBannerRedraw();
+      }
+      try {
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('user', userId);
+        window.history.replaceState({}, '', newUrl);
+      } catch (e) {}
     }
 
     updateDOMUI();
@@ -844,6 +911,9 @@
       const texture = new THREE.CanvasTexture(canvas);
 
       function redraw() {
+        if (!avatarImg.src.endsWith(activeUser.photo)) {
+          avatarImg.src = activeUser.photo;
+        }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Dark glass background with rounded corners
@@ -952,6 +1022,7 @@
       avatarImg.onload = redraw;
       redraw();
 
+      activeProfileBannerRedraw = redraw;
       return { texture, redraw };
     }
 
@@ -1250,7 +1321,7 @@
         const btnText = createActionButtonMesh(
           THREE, 'Text', '💬',
           'rgba(6, 44, 30, 0.95)', '#10b981',
-          () => window.location.href = `sms:${cleanPhone}`
+          () => window.location.href = `sms:${(activeUser.phone || '').replace(/\s+/g, '')}`
         );
         btnText.position.set(-0.60, btnY, btnZ);
         arRoot.add(btnText);
@@ -1259,7 +1330,7 @@
         const btnCall = createActionButtonMesh(
           THREE, 'Call', '📞',
           'rgba(50, 10, 16, 0.95)', '#ef4444',
-          () => window.location.href = `tel:${cleanPhone}`
+          () => window.location.href = `tel:${(activeUser.phone || '').replace(/\s+/g, '')}`
         );
         btnCall.position.set(-0.20, btnY, btnZ);
         arRoot.add(btnCall);

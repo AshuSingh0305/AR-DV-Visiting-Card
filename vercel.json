@@ -1,6 +1,9 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/", "destination": "/ar.html" }
+    { "source": "/", "destination": "/ar.html" },
+    { "source": "/siddharth", "destination": "/ar.html?user=siddharth" },
+    { "source": "/vrishti", "destination": "/ar.html?user=vrishti" },
+    { "source": "/mayuri", "destination": "/ar.html?user=mayuri" }
   ]
 }
