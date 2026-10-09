@@ -1,0 +1,12 @@
+{
+  "name": "data-vigilantes-visiting-card",
+  "version": "1.0.0",
+  "description": "Data Vigilantes AR & Web Business Card",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["ar", "visiting-card", "mindar"],
+  "author": "Data Vigilantes",
+  "license": "ISC"
+}

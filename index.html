@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Siddharth Chandra — Data Vigilantes | AR Business Card</title>
+  <meta name="description" content="Siddharth Chandra, Founder of Data Vigilantes — Cybersecurity, Data Protection, OSINT, Consultancy" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; min-height:100%; font-family:'Inter',sans-serif; overflow-x:hidden; background:#0e0b07; }
+
+    #world-bg {
+      position:fixed; inset:0; z-index:0;
+      background:
+        radial-gradient(ellipse 90% 70% at 20% 30%, #3d2510 0%, transparent 55%),
+        radial-gradient(ellipse 70% 60% at 80% 70%, #1a1c2e 0%, transparent 55%),
+        radial-gradient(ellipse 100% 100% at 50% 50%, #1a1208 0%, #080604 100%);
+    }
+    #world-bg::after {
+      content:''; position:absolute; inset:0;
+      background-image:
+        repeating-linear-gradient(88deg,transparent,transparent 40px,rgba(255,200,100,0.012) 40px,rgba(255,200,100,0.012) 41px),
+        repeating-linear-gradient(2deg,transparent,transparent 80px,rgba(180,120,60,0.015) 80px,rgba(180,120,60,0.015) 81px);
+    }
+
+    #ar-scene {
+      position:relative; z-index:1; min-height:100vh;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:28px 16px 44px; gap:0;
+    }
+
+    #ar-hud {
+      font-size:8px; font-weight:700; letter-spacing:3px; text-transform:uppercase;
+      color:rgba(74,200,255,0.55); margin-bottom:18px;
+      display:flex; align-items:center; gap:10px;
+      opacity:0; animation:fadeIn 0.5s 0.2s ease forwards;
+    }
+    #ar-hud::before, #ar-hud::after { content:''; display:block; width:28px; height:1px; background:rgba(74,200,255,0.4); }
+
+    #profile-row {
+      display:flex; align-items:center; gap:14px; margin-bottom:14px;
+      opacity:0; animation:fadeUp 0.7s 0.5s ease forwards;
+    }
+    #profile-avatar {
+      width:72px; height:72px; border-radius:50%;
+      border:2.5px solid rgba(255,255,255,0.88);
+      object-fit:cover; object-position:center top;
+      box-shadow:0 0 0 6px rgba(255,255,255,0.08), 0 14px 36px rgba(0,0,0,0.55);
+      animation:avatarFloat 4s ease-in-out infinite 1.8s; flex-shrink:0;
+    }
+    @keyframes avatarFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+    #name-block { text-align:left; }
+    #firstname, #lastname {
+      display:block; font-size:36px; font-weight:900; color:white;
+      line-height:0.93; letter-spacing:-1.5px; text-shadow:0 2px 24px rgba(0,0,0,0.45);
+    }
+    #person-title {
+      font-size:9.5px; font-weight:500; color:rgba(255,255,255,0.45);
+      letter-spacing:2.2px; text-transform:uppercase; margin-top:7px;
+    }
+
+    #profile-connector { width:1px; height:14px; background:linear-gradient(to bottom,rgba(74,200,255,0.8),rgba(74,200,255,0.1)); }
+
+    #main-row { display:flex; align-items:center; gap:16px; }
+
+    #left-panel {
+      width:276px; flex-shrink:0;
+      display:flex; flex-direction:column; align-items:center;
+      opacity:0; animation:fadeIn 0.6s 1.1s ease forwards;
+    }
+    #net-label { font-size:8px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.2); margin-bottom:8px; }
+    #network-canvas {
+      display:block; width:276px; height:276px; border-radius:20px;
+      border:1px solid rgba(74,128,196,0.18); background:rgba(5,10,20,0.5); cursor:crosshair;
+    }
+    #node-tooltip {
+      position:fixed; background:rgba(8,16,30,0.96); border:1px solid rgba(74,128,196,0.45);
+      border-radius:9px; padding:8px 11px; pointer-events:none; opacity:0;
+      transition:opacity 0.18s ease; max-width:136px; backdrop-filter:blur(12px); z-index:200;
+    }
+    #node-tooltip.show { opacity:1; }
+    #tooltip-name { font-size:10px; font-weight:700; color:white; margin-bottom:3px; }
+    #tooltip-desc { font-size:9px; color:rgba(180,200,230,0.6); line-height:1.4; }
+
+    #card-zone {
+      position:relative; flex-shrink:0;
+      opacity:0; animation:cardIn 0.9s 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    @keyframes cardIn { from{opacity:0;transform:scale(0.88) translateY(14px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+    .arc { position:absolute; pointer-events:none; }
+    .arc-tl { top:-4px;left:-4px;  width:22px;height:22px; border-top:2px solid rgba(74,200,255,0.9); border-left:2px solid rgba(74,200,255,0.9); }
+    .arc-tr { top:-4px;right:-4px; width:22px;height:22px; border-top:2px solid rgba(74,200,255,0.9); border-right:2px solid rgba(74,200,255,0.9); }
+    .arc-bl { bottom:-4px;left:-4px;  width:22px;height:22px; border-bottom:2px solid rgba(74,200,255,0.9); border-left:2px solid rgba(74,200,255,0.9); }
+    .arc-br { bottom:-4px;right:-4px; width:22px;height:22px; border-bottom:2px solid rgba(74,200,255,0.9); border-right:2px solid rgba(74,200,255,0.9); }
+
+    .adot {
+      position:absolute; width:7px; height:7px; border-radius:50%;
+      background:rgba(74,200,255,0.95);
+      box-shadow:0 0 6px rgba(74,200,255,1), 0 0 16px rgba(74,200,255,0.5);
+      animation:dotBlink 2s ease-in-out infinite;
+    }
+    .adot-tl{top:-3px;left:-3px;animation-delay:0s}
+    .adot-tr{top:-3px;right:-3px;animation-delay:0.5s}
+    .adot-bl{bottom:-3px;left:-3px;animation-delay:1s}
+    .adot-br{bottom:-3px;right:-3px;animation-delay:1.5s}
+    @keyframes dotBlink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.25;transform:scale(0.55)} }
+
+    .aticks { position:absolute; display:flex; flex-direction:column; gap:5px; }
+    .aticks-l { left:-14px; top:50%; transform:translateY(-50%); }
+    .aticks-r { right:-14px; top:50%; transform:translateY(-50%); }
+    .atick { width:9px; height:1.5px; background:rgba(74,200,255,0.45); }
+    .aticks-l .atick { border-radius:0 2px 2px 0; }
+    .aticks-r .atick { border-radius:2px 0 0 2px; }
+
+    .arc-glow {
+      position:absolute; inset:-12px; border-radius:28px;
+      border:1px solid rgba(74,200,255,0.12); pointer-events:none;
+      animation:glowPulse 2.5s ease-in-out infinite;
+    }
+    .arc-glow-2 { inset:-22px; border-color:rgba(74,200,255,0.06); animation-delay:0.8s; }
+    @keyframes glowPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    #ar-detected {
+      position:absolute; bottom:-22px; left:50%; transform:translateX(-50%);
+      font-size:8px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+      color:rgba(74,200,255,0.65); white-space:nowrap;
+      animation:blinkText 2.2s ease-in-out infinite;
+    }
+    @keyframes blinkText { 0%,100%{opacity:0.65} 50%{opacity:0.2} }
+
+    #phys-card {
+      width:290px; height:360px; border-radius:26px;
+      position:relative; overflow:hidden;
+      box-shadow:0 40px 80px rgba(0,0,0,0.75), 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12);
+      animation:cardTilt 6s ease-in-out infinite 1.5s; cursor:default;
+    }
+    @keyframes cardTilt {
+      0%,100%{transform:rotateX(7deg) rotateY(-5deg)}
+      33%{transform:rotateX(5deg) rotateY(-7deg)}
+      66%{transform:rotateX(9deg) rotateY(-3deg)}
+    }
+    #card-bg { position:absolute; inset:0; background:linear-gradient(145deg,#2e3450 0%,#262c42 40%,#1e2338 100%); }
+    .card-scan {
+      position:absolute; left:0; right:0; height:1.5px; top:0;
+      background:linear-gradient(90deg,transparent 0%,rgba(74,200,255,0.35) 20%,rgba(74,200,255,0.95) 50%,rgba(74,200,255,0.35) 80%,transparent 100%);
+      box-shadow:0 0 8px rgba(74,200,255,0.9), 0 0 22px rgba(74,200,255,0.35);
+      animation:scanDown 3.8s ease-in-out infinite 2s;
+    }
+    @keyframes scanDown { 0%{top:0;opacity:0} 5%{opacity:1} 95%{opacity:0.8} 100%{top:100%;opacity:0} }
+    #card-sheen {
+      position:absolute; inset:0; pointer-events:none;
+      background:linear-gradient(115deg,transparent 25%,rgba(255,255,255,0.05) 40%,rgba(255,255,255,0.1) 50%,rgba(255,255,255,0.05) 60%,transparent 75%);
+      animation:sheenMove 5s ease-in-out infinite 2.5s;
+    }
+    @keyframes sheenMove { 0%{transform:translateX(-250%);opacity:0} 8%{opacity:1} 92%{opacity:1} 100%{transform:translateX(350%);opacity:0} }
+    #card-logo-canvas { display:block; position:absolute; top:0; left:0; width:100%; height:65%; }
+    #card-text {
+      position:absolute; bottom:0; left:0; right:0;
+      padding:16px 20px 18px;
+      border-top:1px solid rgba(255,255,255,0.07);
+      background:linear-gradient(to bottom,rgba(30,35,56,0) 0%,rgba(20,24,40,0.5) 100%);
+    }
+    .ct-company { font-size:16px; font-weight:800; color:white; letter-spacing:3px; text-transform:uppercase; margin-bottom:4px; }
+    .ct-person { font-size:10px; font-weight:600; color:rgba(255,255,255,0.45); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; }
+    .ct-contact { font-size:9px; color:rgba(255,255,255,0.28); letter-spacing:0.5px; line-height:1.7; }
+
+    #right-panel { width:276px; flex-shrink:0; opacity:0; animation:fadeIn 0.6s 1.1s ease forwards; }
+    #pw-box { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:22px 20px; }
+    #pw-head { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+    #pw-ico { font-size:22px; }
+    #pw-ttl { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:rgba(255,255,255,0.6); line-height:1.4; }
+    #pw-input {
+      width:100%; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1);
+      border-radius:12px; padding:12px 14px; font-size:14px; font-family:'Courier New',monospace;
+      color:white; letter-spacing:2px; outline:none; margin-bottom:6px; transition:border-color 0.2s;
+    }
+    #pw-input:focus { border-color:rgba(255,255,255,0.28); }
+    #pw-input::placeholder { color:rgba(255,255,255,0.2); font-family:'Inter',sans-serif; font-size:12px; letter-spacing:0.5px; }
+    #pw-toggle-row { display:flex; justify-content:flex-end; margin-bottom:12px; }
+    #pw-toggle { font-size:16px; background:none; border:none; color:rgba(255,255,255,0.3); cursor:pointer; padding:0; transition:color 0.2s; }
+    #pw-toggle:hover { color:rgba(255,255,255,0.65); }
+    #pw-bar-wrap { height:6px; background:rgba(255,255,255,0.07); border-radius:6px; overflow:hidden; margin-bottom:12px; }
+    #pw-bar { height:100%; width:0; border-radius:6px; transition:width 0.4s cubic-bezier(0.34,1.56,0.64,1),background 0.4s ease; }
+    #pw-stat { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    #pw-label { font-size:13px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:rgba(255,255,255,0.28); transition:color 0.3s; }
+    #pw-crack { font-size:11px; color:rgba(255,255,255,0.22); font-family:'Courier New',monospace; transition:color 0.3s; }
+    #pw-verdict { font-size:11px; color:rgba(255,255,255,0.3); line-height:1.6; min-height:18px; transition:all 0.3s; font-style:italic; }
+
+    #buttons-row {
+      display:flex; align-items:center; justify-content:center; gap:14px; margin-top:24px;
+      opacity:0; animation:fadeUp 0.6s 1.3s ease forwards;
+    }
+    .circ-wrap { display:flex; flex-direction:column; align-items:center; gap:6px; }
+    .circ {
+      width:58px; height:58px; border-radius:50%; background:rgba(255,255,255,0.91);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; border:none; text-decoration:none;
+      box-shadow:0 7px 22px rgba(0,0,0,0.48),0 2px 7px rgba(0,0,0,0.3);
+      transition:all 0.28s cubic-bezier(0.34,1.56,0.64,1); flex-shrink:0;
+    }
+    .circ:hover { background:white; transform:translateY(-5px) scale(1.1); box-shadow:0 16px 40px rgba(0,0,0,0.58); }
+    .circ:active { transform:translateY(-1px) scale(0.96); }
+    .circ svg { width:24px; height:24px; }
+    .circ-label { font-size:9px; font-weight:600; color:rgba(255,255,255,0.55); letter-spacing:0.5px; text-transform:uppercase; }
+
+    #pill-row { display:flex; flex-direction:column; gap:9px; margin-top:16px; width:100%; max-width:230px; opacity:0; animation:fadeIn 0.5s 1.5s ease forwards; }
+    .pill-btn {
+      display:flex; align-items:center; justify-content:center; gap:7px;
+      padding:11px 18px; border-radius:50px;
+      background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.17);
+      color:white; font-size:12px; font-weight:600;
+      text-decoration:none; transition:all 0.22s ease; font-family:'Inter',sans-serif;
+    }
+    .pill-btn:hover { background:rgba(255,255,255,0.19); border-color:rgba(255,255,255,0.32); }
+
+    #services-row {
+      display:flex; flex-wrap:wrap; gap:7px; justify-content:center; max-width:370px;
+      margin-top:14px; opacity:0; animation:fadeIn 0.5s 1.7s ease forwards;
+    }
+    .stag {
+      font-size:9px; font-weight:600; letter-spacing:0.8px; color:rgba(255,255,255,0.52);
+      background:rgba(255,255,255,0.055); border:1px solid rgba(255,255,255,0.1);
+      border-radius:20px; padding:4px 11px; transition:all 0.18s ease;
+    }
+    .stag:hover { background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.85); }
+
+    #qr-panel {
+      display:none; flex-direction:column; align-items:center; gap:10px;
+      margin-top:14px; padding:18px; background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.09); border-radius:16px; width:100%; max-width:220px;
+    }
+    #qr-panel.open { display:flex; animation:fadeIn 0.3s ease; }
+    #qrcode { background:white; padding:10px; border-radius:8px; }
+    #qr-lbl { font-size:9px; color:rgba(255,255,255,0.3); letter-spacing:2px; text-transform:uppercase; }
+
+    #footer { margin-top:28px; font-size:9px; color:rgba(255,255,255,0.15); letter-spacing:2px; text-transform:uppercase; text-align:center; opacity:0; animation:fadeIn 0.5s 2.2s ease forwards; }
+
+    @keyframes fadeIn { to{opacity:1} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+    @media(max-width:500px) {
+      #main-row{gap:10px}
+      #left-panel,#right-panel{width:100px}
+      #network-canvas{width:100px;height:100px}
+      #phys-card{width:182px;height:218px}
+      .circ{width:50px;height:50px}
+      #buttons-row{gap:10px}
+      #firstname,#lastname{font-size:30px}
+      #profile-avatar{width:60px;height:60px}
+    }
+    @media(max-width:380px) {
+      #main-row{flex-direction:column;align-items:center;gap:12px}
+      #left-panel,#right-panel{width:90%;max-width:300px}
+      #network-canvas{width:100%;height:200px}
+    }
+  </style>
+</head>
+<body>
+<div id="world-bg"></div>
+<div id="ar-scene">
+
+  <div id="ar-hud">AR &middot; Data Vigilantes &middot; Tracking</div>
+
+  <div id="profile-row">
+    <img id="profile-avatar" src="siddharth.jpg" alt="Siddharth Chandra" />
+    <div id="name-block">
+      <span id="firstname">Siddharth</span>
+      <span id="lastname">Chandra</span>
+      <div id="person-title">Founder &middot; Data Vigilantes</div>
+    </div>
+  </div>
+
+  <div id="profile-connector"></div>
+
+  <div id="main-row">
+
+    <div id="left-panel">
+      <div id="net-label">Services Network</div>
+      <canvas id="network-canvas" width="276" height="276"></canvas>
+    </div>
+
+    <div id="card-zone">
+      <div class="arc arc-glow"></div>
+      <div class="arc arc-glow arc-glow-2"></div>
+      <div class="arc arc-tl"></div>
+      <div class="arc arc-tr"></div>
+      <div class="arc arc-bl"></div>
+      <div class="arc arc-br"></div>
+      <div class="adot adot-tl"></div>
+      <div class="adot adot-tr"></div>
+      <div class="adot adot-bl"></div>
+      <div class="adot adot-br"></div>
+      <div class="aticks aticks-l">
+        <div class="atick"></div><div class="atick"></div><div class="atick"></div>
+      </div>
+      <div class="aticks aticks-r">
+        <div class="atick"></div><div class="atick"></div><div class="atick"></div>
+      </div>
+      <div id="phys-card">
+        <div id="card-bg"></div>
+        <div class="card-scan"></div>
+        <div id="card-sheen"></div>
+        <canvas id="card-logo-canvas"></canvas>
+        <div id="card-text">
+          <div class="ct-company">Data Vigilantes</div>
+          <div class="ct-person">Siddharth Chandra &middot; Founder</div>
+          <div class="ct-contact">+91 78798 84975<br>datavigilantes.com</div>
+        </div>
+      </div>
+      <div id="ar-detected">&#9679; AR Target Detected</div>
+    </div>
+
+    <div id="right-panel">
+      <div id="pw-box">
+        <div id="pw-head">
+          <div id="pw-ico">&#128272;</div>
+          <div id="pw-ttl">Password Strength</div>
+        </div>
+        <input id="pw-input" type="password" placeholder="Test a password..." oninput="checkPassword(this.value)" autocomplete="new-password" />
+        <div id="pw-toggle-row">
+          <button id="pw-toggle" onclick="togglePwVis()" title="Show/hide">&#128065;</button>
+        </div>
+        <div id="pw-bar-wrap"><div id="pw-bar"></div></div>
+        <div id="pw-stat">
+          <div id="pw-label">&#8212;</div>
+          <div id="pw-crack"></div>
+        </div>
+        <div id="pw-verdict"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="node-tooltip">
+    <div id="tooltip-name"></div>
+    <div id="tooltip-desc"></div>
+  </div>
+
+  <div id="buttons-row">
+    <div class="circ-wrap">
+      <a href="tel:+917879884975" class="circ" id="btn-call" title="Call">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="#1a1a1a"/></svg>
+      </a>
+      <span class="circ-label">Call</span>
+    </div>
+    <div class="circ-wrap">
+      <a href="https://www.instagram.com/datavigilantes" target="_blank" rel="noopener" class="circ" id="btn-msg" title="Message">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" fill="#1a1a1a"/></svg>
+      </a>
+      <span class="circ-label">Message</span>
+    </div>
+    <div class="circ-wrap">
+      <button class="circ" id="btn-save" onclick="saveContact()" title="Save Contact">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#1a1a1a"/></svg>
+      </button>
+      <span class="circ-label">Save</span>
+    </div>
+    <div class="circ-wrap">
+      <button class="circ" id="btn-qr" onclick="toggleQR()" title="QR Code">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 3h7v7H3V3zm1 1v5h5V4H4zm1 1h3v3H5V5zm9-2h7v7h-7V3zm1 1v5h5V4h-5zm1 1h3v3h-3V5zM3 14h7v7H3v-7zm1 1v5h5v-5H4zm1 1h3v3H5v-3zm9 0h2v2h-2v-2zm2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zm2 2h2v2h-2v-2zm-4-6h2v2h-2v-2zm4 0h2v2h-2v-2zm2-2h2v2h-2v-2z" fill="#1a1a1a"/></svg>
+      </button>
+      <span class="circ-label">QR</span>
+    </div>
+  </div>
+
+  <div id="pill-row">
+    <a href="https://www.datavigilantes.com" target="_blank" rel="noopener" class="pill-btn" id="btn-website">&#127760; &nbsp;datavigilantes.com</a>
+    <a href="https://www.instagram.com/datavigilantes" target="_blank" rel="noopener" class="pill-btn" id="btn-insta">
+      <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+        <defs>
+          <radialGradient id="igGrad" cx="30%" cy="107%" r="150%">
+            <stop offset="0%" stop-color="#fdf497"/>
+            <stop offset="45%" stop-color="#fd5949"/>
+            <stop offset="60%" stop-color="#d6249f"/>
+            <stop offset="90%" stop-color="#285AEB"/>
+          </radialGradient>
+        </defs>
+        <path fill="url(#igGrad)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+      &nbsp;@datavigilantes
+    </a>
+  </div>
+
+  <div id="services-row">
+    <span class="stag">Data Protection</span>
+    <span class="stag">OSINT</span>
+    <span class="stag">Consultancy</span>
+    <span class="stag">Deep Cleaning</span>
+    <span class="stag">Phone Recovery</span>
+    <span class="stag">Cafe Protection</span>
+  </div>
+
+  <div id="qr-panel">
+    <div id="qrcode"></div>
+    <div id="qr-lbl">Scan &middot; datavigilantes.com</div>
+  </div>
+
+  <div id="footer">Digitally Secured &middot; Data Vigilantes</div>
+
+</div>
+
+<script>
+(function(){
+  var card=document.getElementById('phys-card');
+  var c=document.getElementById('card-logo-canvas');
+  var W=card.offsetWidth||210;
+  var H=Math.round((card.offsetHeight||250)*0.62);
+  c.width=W*2; c.height=H*2;
+  c.style.width=W+'px'; c.style.height=H+'px';
+  var ctx=c.getContext('2d'); ctx.scale(2,2);
+  var cW=W,cH=H;
+  var r=Math.min(cW,cH)*0.30;
+  var dCx=cW*0.27,dCy=cH*0.52;
+  var vCx=cW*0.73,vCy=cH*0.52;
+  var dGrad=ctx.createRadialGradient(dCx-r*0.3,dCy-r*0.3,0,dCx,dCy,r);
+  dGrad.addColorStop(0,'#E83C4B'); dGrad.addColorStop(0.6,'#C42535'); dGrad.addColorStop(1,'#9A1020');
+  ctx.beginPath(); ctx.arc(dCx,dCy,r,0,Math.PI*2); ctx.fillStyle=dGrad; ctx.fill();
+  var dr=r*0.68; ctx.save(); ctx.beginPath();
+  ctx.moveTo(dCx,dCy-dr); ctx.lineTo(dCx,dCy+dr);
+  ctx.arc(dCx,dCy,dr,Math.PI/2,-Math.PI/2,true); ctx.closePath();
+  ctx.fillStyle='rgba(255,255,255,0.93)'; ctx.fill(); ctx.restore();
+  var dHL=ctx.createRadialGradient(dCx-r*0.35,dCy-r*0.4,0,dCx,dCy,r);
+  dHL.addColorStop(0,'rgba(255,255,255,0.28)'); dHL.addColorStop(0.5,'rgba(255,255,255,0.05)'); dHL.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.beginPath(); ctx.arc(dCx,dCy,r,0,Math.PI*2); ctx.fillStyle=dHL; ctx.fill();
+  var vGrad=ctx.createRadialGradient(vCx-r*0.3,vCy-r*0.3,0,vCx,vCy,r);
+  vGrad.addColorStop(0,'#3D84C4'); vGrad.addColorStop(0.6,'#2A6AA0'); vGrad.addColorStop(1,'#1A5080');
+  ctx.beginPath(); ctx.arc(vCx,vCy,r,0,Math.PI*2); ctx.fillStyle=vGrad; ctx.fill();
+  var vr=r*0.68; ctx.save(); ctx.beginPath();
+  ctx.moveTo(vCx-vr,vCy); ctx.lineTo(vCx+vr,vCy);
+  ctx.arc(vCx,vCy,vr,0,Math.PI,false); ctx.closePath();
+  ctx.fillStyle='rgba(255,255,255,0.93)'; ctx.fill(); ctx.restore();
+  var vHL=ctx.createRadialGradient(vCx-r*0.35,vCy-r*0.4,0,vCx,vCy,r);
+  vHL.addColorStop(0,'rgba(255,255,255,0.28)'); vHL.addColorStop(0.5,'rgba(255,255,255,0.05)'); vHL.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.beginPath(); ctx.arc(vCx,vCy,r,0,Math.PI*2); ctx.fillStyle=vHL; ctx.fill();
+})();
+
+var cardEl=document.getElementById('phys-card');
+document.addEventListener('mousemove',function(e){
+  var dx=(e.clientX-window.innerWidth/2)/(window.innerWidth/2);
+  var dy=(e.clientY-window.innerHeight/2)/(window.innerHeight/2);
+  cardEl.style.transform='rotateX('+(7-dy*4)+'deg) rotateY('+(-5+dx*7)+'deg)';
+});
+document.addEventListener('mouseleave',function(){ cardEl.style.transform=''; });
+document.addEventListener('touchmove',function(e){
+  var dx=(e.touches[0].clientX-window.innerWidth/2)/(window.innerWidth/2);
+  cardEl.style.transform='rotateX(7deg) rotateY('+(-5+dx*7)+'deg)';
+},{passive:true});
+
+(function(){
+  var cvs=document.getElementById('network-canvas');
+  var tip=document.getElementById('node-tooltip');
+  var tipName=document.getElementById('tooltip-name');
+  var tipDesc=document.getElementById('tooltip-desc');
+  var ctx=cvs.getContext('2d');
+  var SIZE=276, cx=SIZE/2, cy=SIZE/2, orbitR=96;
+  var services=[
+    {label:'Data\nProtection',icon:'S',color:'#4A80C4',desc:'End-to-end data security for individuals and businesses.'},
+    {label:'OSINT',icon:'O',color:'#E8394D',desc:'Open-source intelligence gathering and profiling.'},
+    {label:'Consultancy',icon:'C',color:'#7ecf4a',desc:'Expert cybersecurity strategy and risk advisory.'},
+    {label:'Deep Cleaning',icon:'D',color:'#ff7a45',desc:'Remove your digital footprint from the internet.'},
+    {label:'Phone Recovery',icon:'P',color:'#c084fc',desc:'Recover data from damaged or locked devices.'},
+    {label:'Cafe Protection',icon:'W',color:'#38bdf8',desc:'Secure public WiFi and cafe network environments.'}
+  ];
+  var nodes=services.map(function(s,i){
+    var angle=(i/services.length)*Math.PI*2-Math.PI/2;
+    return {label:s.label,icon:s.icon,color:s.color,desc:s.desc,x:cx+Math.cos(angle)*orbitR,y:cy+Math.sin(angle)*orbitR,r:24};
+  });
+  var hovered=-1;
+  function draw(ts){
+    requestAnimationFrame(draw);
+    ctx.clearRect(0,0,SIZE,SIZE);
+    var oa=ts*0.00018, p=ts*0.003;
+    nodes.forEach(function(n,i){
+      var a=(i/nodes.length)*Math.PI*2-Math.PI/2+oa;
+      n.x=cx+Math.cos(a)*orbitR; n.y=cy+Math.sin(a)*orbitR;
+    });
+    nodes.forEach(function(n){
+      var g=ctx.createLinearGradient(cx,cy,n.x,n.y);
+      g.addColorStop(0,'rgba(74,128,196,0.4)'); g.addColorStop(1,n.color+'55');
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(n.x,n.y);
+      ctx.strokeStyle=g; ctx.lineWidth=1;
+      ctx.setLineDash([3,5]); ctx.lineDashOffset=-p*2.8;
+      ctx.stroke(); ctx.setLineDash([]);
+    });
+    var cg=ctx.createRadialGradient(cx,cy,0,cx,cy,22);
+    cg.addColorStop(0,'rgba(74,128,196,0.55)'); cg.addColorStop(1,'rgba(74,128,196,0)');
+    ctx.beginPath(); ctx.arc(cx,cy,22,0,Math.PI*2); ctx.fillStyle=cg; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx,cy,18,0,Math.PI*2);
+    ctx.fillStyle='#0c1525'; ctx.strokeStyle='rgba(74,128,196,0.8)'; ctx.lineWidth=1.5;
+    ctx.fill(); ctx.stroke();
+    var pr=20+Math.sin(p)*3;
+    ctx.beginPath(); ctx.arc(cx,cy,pr,0,Math.PI*2);
+    ctx.strokeStyle='rgba(74,128,196,'+(0.18+Math.sin(p)*0.09)+')'; ctx.lineWidth=1; ctx.stroke();
+    ctx.font='bold 8.5px Inter,sans-serif'; ctx.fillStyle='white'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('DV',cx,cy);
+    nodes.forEach(function(n,i){
+      var isH=i===hovered, r=isH?n.r+3:n.r;
+      var ng=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r+7);
+      ng.addColorStop(0,n.color+(isH?'55':'28')); ng.addColorStop(1,'transparent');
+      ctx.beginPath(); ctx.arc(n.x,n.y,r+7,0,Math.PI*2); ctx.fillStyle=ng; ctx.fill();
+      ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2);
+      ctx.fillStyle=isH?n.color+'99':'#0c1525';
+      ctx.strokeStyle=n.color+(isH?'ff':'aa'); ctx.lineWidth=isH?1.5:1;
+      ctx.fill(); ctx.stroke();
+      ctx.font=(isH?'bold 9px':'bold 8px')+' Inter,sans-serif';
+      ctx.fillStyle=isH?'white':'rgba(190,210,240,0.8)'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(n.icon,n.x,n.y-4);
+      var lines=n.label.split('\n');
+      ctx.font=(isH?'600 7px':'500 6.5px')+' Inter,sans-serif';
+      ctx.fillStyle=isH?'white':'rgba(190,210,240,0.65)'; ctx.textBaseline='top';
+      lines.forEach(function(l,li){ ctx.fillText(l,n.x,n.y+6+li*8); });
+    });
+  }
+  requestAnimationFrame(draw);
+  function hitTest(mx,my){
+    var rect=cvs.getBoundingClientRect(), scale=SIZE/rect.width;
+    var px=(mx-rect.left)*scale, py=(my-rect.top)*scale;
+    return nodes.findIndex(function(n){ return Math.hypot(n.x-px,n.y-py)<n.r+9; });
+  }
+  function showTip(idx,mx,my){
+    if(idx<0){tip.classList.remove('show');hovered=-1;return;}
+    hovered=idx;
+    var n=nodes[idx];
+    tipName.textContent=n.label.replace('\n',' ');
+    tipDesc.textContent=n.desc;
+    tip.style.left=(mx+14)+'px'; tip.style.top=(my-18)+'px';
+    tip.classList.add('show');
+  }
+  cvs.addEventListener('mousemove',function(e){showTip(hitTest(e.clientX,e.clientY),e.clientX,e.clientY);});
+  cvs.addEventListener('mouseleave',function(){tip.classList.remove('show');hovered=-1;});
+  cvs.addEventListener('touchstart',function(e){
+    e.preventDefault();
+    var t=e.touches[0]; showTip(hitTest(t.clientX,t.clientY),t.clientX,t.clientY);
+  },{passive:false});
+  cvs.addEventListener('touchend',function(){setTimeout(function(){tip.classList.remove('show');},1800);});
+})();
+
+function checkPassword(pw){
+  var bar=document.getElementById('pw-bar'),label=document.getElementById('pw-label');
+  var crack=document.getElementById('pw-crack'),verdict=document.getElementById('pw-verdict');
+  if(!pw){bar.style.width='0';label.style.color='rgba(255,255,255,0.28)';label.textContent='--';crack.textContent='';verdict.textContent='';return;}
+  var score=0;
+  if(pw.length>=8)score++; if(pw.length>=12)score++; if(pw.length>=16)score++;
+  if(/[A-Z]/.test(pw))score++; if(/[a-z]/.test(pw))score++; if(/[0-9]/.test(pw))score++;
+  if(/[^A-Za-z0-9]/.test(pw))score+=2; if(pw.length>=20)score++;
+  var capped=Math.min(score,9), pct=Math.round((capped/9)*100);
+  var levels=[
+    {max:2,label:'Very Weak',color:'#E8394D',crack:'Instantly',msg:'Change this NOW.'},
+    {max:4,label:'Weak',color:'#ff7a45',crack:'Seconds',msg:'Add uppercase and symbols.'},
+    {max:5,label:'Fair',color:'#ffbd2e',crack:'Minutes',msg:'Hackers can still crack this.'},
+    {max:6,label:'Good',color:'#7ecf4a',crack:'Hours',msg:'Decent. Keep going.'},
+    {max:7,label:'Strong',color:'#4A80C4',crack:'Days',msg:'Most attacks fail here.'},
+    {max:9,label:'Very Strong',color:'#00ff80',crack:'Years',msg:'DV Approved - Digitally Secured!'}
+  ];
+  var lvl=levels.find(function(l){return capped<=l.max;})||levels[levels.length-1];
+  bar.style.width=pct+'%'; bar.style.background=lvl.color;
+  label.style.color=lvl.color; label.textContent=lvl.label;
+  crack.style.color=lvl.color; crack.textContent=lvl.crack;
+  verdict.textContent=lvl.msg;
+}
+function togglePwVis(){
+  var inp=document.getElementById('pw-input'),btn=document.getElementById('pw-toggle');
+  if(inp.type==='password'){inp.type='text';btn.textContent='Hide';}
+  else{inp.type='password';btn.textContent='Show';}
+}
+var qrDone=false;
+function toggleQR(){
+  var panel=document.getElementById('qr-panel'); panel.classList.toggle('open');
+  if(panel.classList.contains('open')&&!qrDone){
+    new QRCode(document.getElementById('qrcode'),{text:'https://www.datavigilantes.com',width:140,height:140,colorDark:'#0d1a2e',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+    qrDone=true;
+  }
+}
+function saveContact(){
+  var vcard='BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Siddharth Chandra\r\nN:Chandra;Siddharth;;;\r\nORG:Data Vigilantes\r\nTITLE:Founder\r\nTEL;TYPE=CELL:+917879884975\r\nURL:https://www.datavigilantes.com\r\nNOTE:Cybersecurity | Data Protection | OSINT | Consultancy\r\nEND:VCARD';
+  var blob=new Blob([vcard],{type:'text/vcard'});
+  var url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download='Siddharth_Chandra_DataVigilantes.vcf';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

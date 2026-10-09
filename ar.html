@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Data Vigilantes — AR Business Card</title>
+  <meta name="description" content="Augmented Reality Business Card for Data Vigilantes. Scan physical card to reveal interactive AR profile, video preview, and direct contacts." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+
+  <!-- MindAR + Three.js (all-in-one UMD bundle) -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.5/dist/mindar-image-three.prod.js"></script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --red: #E8394D;
+      --red-glow: rgba(232, 57, 77, 0.45);
+      --blue: #4A80C4;
+      --cyan: #38bdf8;
+      --green: #10b981;
+      --linkedin: #0a66c2;
+      --glass: rgba(8, 14, 26, 0.88);
+      --glass-border: rgba(74, 128, 196, 0.25);
+      --text: #F0F4FF;
+      --text-dim: rgba(200, 215, 240, 0.65);
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #030712;
+      font-family: 'Outfit', -apple-system, sans-serif;
+      color: var(--text);
+      user-select: none;
+    }
+
+    /* ─── Loading Screen ─── */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: #030712;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      z-index: 9999;
+      transition: opacity 0.6s ease;
+    }
+
+    #loading-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-logo-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .progress-wrap {
+      width: 220px;
+    }
+
+    .progress-bar-bg {
+      height: 3px;
+      background: rgba(74, 128, 196, 0.15);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--red), var(--cyan));
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      color: var(--text-dim);
+      letter-spacing: 1.5px;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    /* ─── Start Screen ─── */
+    #start-screen {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 25%, #0f172a 0%, #030712 100%);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      padding: 28px 24px;
+      z-index: 9000;
+      text-align: center;
+    }
+
+    #start-screen.show {
+      display: flex;
+    }
+
+    .team-badge-preview {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--glass-border);
+      padding: 8px 16px 8px 10px;
+      border-radius: 50px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      animation: floatBadge 3.5s ease-in-out infinite;
+    }
+
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .badge-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    .badge-info {
+      text-align: left;
+    }
+
+    .badge-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .badge-role {
+      font-size: 11px;
+      color: var(--cyan);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .start-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 40%, rgba(200, 220, 255, 0.7));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .start-sub {
+      font-size: 13.5px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      max-width: 290px;
+    }
+
+    .start-sub strong {
+      color: #fff;
+    }
+
+    .card-illus {
+      width: 170px;
+      height: 105px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #111827, #030712);
+      border: 1.5px solid rgba(74, 128, 196, 0.35);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(74, 128, 196, 0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin: 6px 0;
+      overflow: hidden;
+    }
+
+    .card-illus::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 200%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      animation: cardScanline 2.4s linear infinite;
+    }
+
+    @keyframes cardScanline {
+      0% { top: 0%; }
+      100% { top: 100%; }
+    }
+
+    .card-illus-txt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    #btn-start-ar {
+      width: 230px;
+      padding: 15px 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--red) 0%, #b91c1c 100%);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(232, 57, 77, 0.45);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    #btn-start-ar:active {
+      transform: scale(0.96);
+    }
+
+    /* ─── AR Container (MindAR Canvas) ─── */
+    #ar-container {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      display: none;
+      overflow: hidden;
+    }
+
+    #ar-container.active {
+      display: block;
+    }
+
+    /* ─── AR Screen Chrome & Scanner HUD ─── */
+    #scan-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      display: none;
+    }
+
+    #scan-overlay.active {
+      display: block;
+    }
+
+    /* Top HUD Bar */
+    .ar-top-hud {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      right: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: auto;
+    }
+
+    .hud-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(3, 7, 18, 0.7);
+      border: 1px solid var(--glass-border);
+      padding: 6px 12px;
+      border-radius: 30px;
+      backdrop-filter: blur(12px);
+    }
+
+    .hud-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    .hud-brand-txt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #fff;
+    }
+
+    #btn-close-ar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      backdrop-filter: blur(12px);
+    }
+
+    /* Tracking Status Pill */
+    #scan-status-pill {
+      position: absolute;
+      top: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--glass-border);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--cyan);
+      backdrop-filter: blur(14px);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    #scan-status-pill.detected {
+      border-color: rgba(16, 185, 129, 0.5);
+      color: #34d399;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
+    }
+
+    /* Viewfinder Reticle (fades when detected) */
+    .viewfinder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 260px;
+      height: 180px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .viewfinder.hidden {
+      opacity: 0;
+    }
+
+    .reticle-corner {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-color: var(--cyan);
+      border-style: solid;
+    }
+
+    .reticle-tl { top: 0; left: 0; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+    .reticle-tr { top: 0; right: 0; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+    .reticle-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; border-radius: 0 0 4px 0; }
+    .reticle-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+
+    .reticle-laser {
+      position: absolute;
+      left: 0; right: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      box-shadow: 0 0 8px var(--cyan);
+      animation: laserSweep 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes laserSweep {
+      0% { top: 6%; }
+      100% { top: 94%; }
+    }
+
+    /* ─── AR Interactive Quick-Action HUD Dock (Bottom) ─── */
+    #ar-hud-dock {
+      position: fixed;
+      bottom: 20px;
+      left: 14px;
+      right: 14px;
+      background: rgba(8, 14, 26, 0.88);
+      border: 1px solid rgba(74, 128, 196, 0.35);
+      border-radius: 24px;
+      padding: 14px 16px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 24px rgba(56, 189, 248, 0.15);
+      z-index: 50;
+      transform: translateY(140%);
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    #ar-hud-dock.visible {
+      transform: translateY(0);
+    }
+
+    .dock-profile-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dock-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+      flex-shrink: 0;
+    }
+
+    .dock-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dock-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+
+    .dock-title {
+      font-size: 11.5px;
+      color: var(--cyan);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dock-company {
+      font-size: 9.5px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .dock-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .dock-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 10px 4px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fff;
+      text-decoration: none;
+      font-size: 10.5px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .dock-btn:active {
+      transform: scale(0.92);
+    }
+
+    .dock-btn-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .dock-btn--text {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+
+    .dock-btn--call {
+      background: rgba(232, 57, 77, 0.12);
+      border-color: rgba(232, 57, 77, 0.3);
+      color: #fca5a5;
+    }
+
+    .dock-btn--email {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.3);
+      color: #7dd3fc;
+    }
+
+    .dock-btn--linkedin {
+      background: rgba(10, 102, 194, 0.15);
+      border-color: rgba(10, 102, 194, 0.4);
+      color: #93c5fd;
+    }
+
+    .dock-secondary-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dock-btn-secondary {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .dock-btn-secondary:active {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ─── Error Screen ─── */
+    #error-screen {
+      position: fixed;
+      inset: 0;
+      background: #030712;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 9999;
+      padding: 32px;
+      text-align: center;
+    }
+
+    #error-screen.show {
+      display: flex;
+    }
+
+    .error-icon {
+      font-size: 48px;
+    }
+
+    .error-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .error-msg {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 290px;
+    }
+
+    .error-btn {
+      margin-top: 12px;
+      padding: 13px 32px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--red), #b91c1c);
+      color: white;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── Loading Screen ─── -->
+  <div id="loading-screen">
+    <div class="loading-logo-wrap">
+      <img src="dv-logo.png" style="width:120px;height:auto;filter:drop-shadow(0 4px 12px rgba(56,189,248,0.3));" alt="Data Vigilantes" />
+    </div>
+    <div class="loading-title">Data Vigilantes</div>
+    <div class="progress-wrap">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-label" id="progress-label">INITIALIZING AR ENGINE</div>
+    </div>
+  </div>
+
+  <!-- ─── Start Screen (Ready to Scan) ─── -->
+  <div id="start-screen">
+    <!-- Active User Preview Card -->
+    <div class="team-badge-preview">
+      <img id="start-avatar" class="badge-avatar" src="siddharth.jpg" alt="Team Member" />
+      <div class="badge-info">
+        <div id="start-name" class="badge-name">Siddharth Chandra</div>
+        <div id="start-role" class="badge-role">Founder & CEO</div>
+      </div>
+    </div>
+
+    <div class="start-title">AR Business Card</div>
+
+    <div class="card-illus">
+      <span style="font-size:28px;">⚔️</span>
+      <div class="card-illus-txt">DATA VIGILANTES</div>
+    </div>
+
+    <div class="start-sub">
+      Point your camera at the physical<br>
+      <strong>Data Vigilantes Card</strong><br>
+      to experience the 3D interactive hologram.
+    </div>
+
+    <button id="btn-start-ar" onclick="startAR()">Launch Camera</button>
+  </div>
+
+  <!-- ─── AR Container (Three.js WebGL & Camera) ─── -->
+  <div id="ar-container"></div>
+
+  <!-- ─── AR Overlay HUD ─── -->
+  <div id="scan-overlay">
+    <div class="ar-top-hud">
+      <div class="hud-brand">
+        <div class="hud-dot"></div>
+        <span class="hud-brand-txt">DV SPATIAL AR</span>
+      </div>
+      <button id="btn-close-ar" onclick="stopAR()">✕</button>
+    </div>
+
+    <div id="scan-status-pill">
+      <span>🔍</span>
+      <span id="scan-status-text">SCANNING CARD</span>
+    </div>
+
+    <div class="viewfinder" id="viewfinder">
+      <div class="reticle-corner reticle-tl"></div>
+      <div class="reticle-corner reticle-tr"></div>
+      <div class="reticle-corner reticle-bl"></div>
+      <div class="reticle-corner reticle-br"></div>
+      <div class="reticle-laser"></div>
+    </div>
+
+    <!-- ─── Bottom Interactive HUD Dock ─── -->
+    <div id="ar-hud-dock">
+      <div class="dock-profile-row">
+        <img id="dock-avatar-img" class="dock-avatar" src="siddharth.jpg" alt="Profile" />
+        <div class="dock-details">
+          <div id="dock-name" class="dock-name">Siddharth Chandra</div>
+          <div id="dock-title" class="dock-title">Founder & CEO</div>
+          <div class="dock-company">⚔ DATA VIGILANTES</div>
+        </div>
+      </div>
+
+      <div class="dock-actions-grid">
+        <a id="dock-btn-text" href="sms:+917879884975" class="dock-btn dock-btn--text">
+          <span class="dock-btn-icon">💬</span>
+          <span>Text</span>
+        </a>
+        <a id="dock-btn-call" href="tel:+917879884975" class="dock-btn dock-btn--call">
+          <span class="dock-btn-icon">📞</span>
+          <span>Call</span>
+        </a>
+        <a id="dock-btn-email" href="mailto:founder@datavigilantes.com" class="dock-btn dock-btn--email">
+          <span class="dock-btn-icon">✉️</span>
+          <span>Email</span>
+        </a>
+        <a id="dock-btn-linkedin" href="https://www.linkedin.com/company/datavigilantes" target="_blank" class="dock-btn dock-btn--linkedin">
+          <span class="dock-btn-icon">💼</span>
+          <span>LinkedIn</span>
+        </a>
+      </div>
+
+      <div class="dock-secondary-row">
+        <a id="dock-btn-website" href="https://www.datavigilantes.com" target="_blank" class="dock-btn-secondary">
+          <span>🌐</span>
+          <span>Website</span>
+        </a>
+        <button onclick="saveContact()" class="dock-btn-secondary">
+          <span>💾</span>
+          <span>Save Contact</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Error Screen ─── -->
+  <div id="error-screen">
+    <div class="error-icon">⚠️</div>
+    <div class="error-title">Camera Access Required</div>
+    <div class="error-msg" id="error-msg">Please allow camera permissions in your browser to view the AR card.</div>
+    <button class="error-btn" onclick="location.reload()">Try Again</button>
+  </div>
+
+  <script>
+    // ─── 1. The Team Database ────────────────────────────────────────────────
+    const teamData = {
+      siddharth: {
+        name: "Siddharth Chandra",
+        title: "Founder & CEO",
+        phone: "+91 78798 84975",
+        email: "founder@datavigilantes.com",
+        linkedin: "https://www.linkedin.com/company/datavigilantes",
+        insta: "@datavigilantes",
+        instaLink: "https://www.instagram.com/datavigilantes",
+        photo: "siddharth.jpg"
+      },
+      vrishti: {
+        name: "Vrishti",
+        title: "Director of Marketing",
+        phone: "+91 70329 03011",
+        email: "marketing@datavigilantes.com",
+        linkedin: "https://www.linkedin.com/company/datavigilantes",
+        insta: "@datavigilantes",
+        instaLink: "https://www.instagram.com/datavigilantes",
+        photo: "Vrishti.jpeg"
+      },
+      mayuri: {
+        name: "Mayuri",
+        title: "Director of Operations",
+        phone: "+91 72018 21497",
+        email: "mayuri@datavigilantes.com",
+        linkedin: "https://www.linkedin.com/company/datavigilantes",
+        insta: "@datavigilantes",
+        instaLink: "https://www.instagram.com/datavigilantes",
+        photo: "Mayuri.jpeg"
+      }
+    };
+
+    // ─── 2. Parse URL & Resolve Active Profile ──────────────────────────────
+    function getActiveUser() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = (urlParams.get('user') || '').toLowerCase().trim();
+      if (userId && teamData[userId]) {
+        return teamData[userId];
+      }
+      return teamData['siddharth'];
+    }
+
+    const activeUser = getActiveUser();
+    const cleanPhone = (activeUser.phone || '').replace(/\s+/g, '');
+
+    // ─── 3. Inject Profile Data into DOM UI ──────────────────────────────────
+    function updateDOMUI() {
+      // Start Screen preview
+      document.getElementById('start-avatar').src = activeUser.photo;
+      document.getElementById('start-name').textContent = activeUser.name;
+      document.getElementById('start-role').textContent = activeUser.title;
+
+      // AR Dock items
+      document.getElementById('dock-avatar-img').src = activeUser.photo;
+      document.getElementById('dock-name').textContent = activeUser.name;
+      document.getElementById('dock-title').textContent = activeUser.title;
+
+      // Contact action buttons
+      document.getElementById('dock-btn-text').href = `sms:${cleanPhone}`;
+      document.getElementById('dock-btn-call').href = `tel:${cleanPhone}`;
+      document.getElementById('dock-btn-email').href = `mailto:${activeUser.email}`;
+      document.getElementById('dock-btn-linkedin').href = activeUser.linkedin;
+    }
+
+    updateDOMUI();
+
+    // ─── Logo Asset ────────────────────────────────────────────────────────
+    // Uses the official transparent vector logo: dv-logo.png
+
+
+    // ─── State ──────────────────────────────────────────────────────────────
+    let mindarThree = null;
+    let arRunning = false;
+    let cardDetected = false;
+    const clickableObjects = [];
+
+    function showStartScreen() {
+      document.getElementById('loading-screen').classList.add('fade-out');
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('start-screen').classList.add('show');
+      }, 600);
+    }
+
+    // ─── Texture Helpers ────────────────────────────────────────────────────
+
+    // 1. Profile Banner Texture (User Avatar, Name, Title, DV Verified)
+    function createProfileBannerTexture(THREE) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 360;
+      const ctx = canvas.getContext('2d');
+
+      const avatarImg = new Image();
+      avatarImg.crossOrigin = 'anonymous';
+      avatarImg.src = activeUser.photo;
+
+      const texture = new THREE.CanvasTexture(canvas);
+
+      function redraw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Dark glass background with rounded corners
+        ctx.save();
+        ctx.beginPath();
+        const r = 40;
+        ctx.roundRect ? ctx.roundRect(16, 16, 992, 328, r) : ctx.rect(16, 16, 992, 328);
+        ctx.fillStyle = 'rgba(6, 14, 28, 0.94)';
+        ctx.fill();
+
+        // Neon cyber border gradient
+        const grad = ctx.createLinearGradient(0, 0, 1024, 360);
+        grad.addColorStop(0, '#E8394D');
+        grad.addColorStop(0.5, '#38bdf8');
+        grad.addColorStop(1, '#4A80C4');
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = grad;
+        ctx.stroke();
+        ctx.restore();
+
+        // Avatar circle
+        const avX = 180, avY = 180, avR = 120;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(avX, avY, avR, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+
+        if (avatarImg.complete && avatarImg.naturalWidth > 0) {
+          ctx.drawImage(avatarImg, avX - avR, avY - avR, avR * 2, avR * 2);
+        } else {
+          ctx.fillStyle = '#1e293b';
+          ctx.fill();
+        }
+        ctx.restore();
+
+        // Glowing avatar border ring
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(avX, avY, avR + 4, 0, Math.PI * 2);
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = '#38bdf8';
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 18;
+        ctx.stroke();
+        ctx.restore();
+
+        // Online status dot
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(avX + 80, avY + 80, 16, 0, Math.PI * 2);
+        ctx.fillStyle = '#10b981';
+        ctx.shadowColor = '#10b981';
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#060e1a';
+        ctx.stroke();
+        ctx.restore();
+
+        // Profile Text
+        const textX = 340;
+
+        // Verified Pill
+        ctx.save();
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(textX, 60, 260, 36, 18) : ctx.rect(textX, 60, 260, 36);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.font = 'bold 18px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#38bdf8';
+        ctx.fillText('⚔ DATA VIGILANTES', textX + 22, 85);
+        ctx.restore();
+
+        // Full Name
+        ctx.save();
+        ctx.font = '900 56px "Outfit", sans-serif';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 14;
+        ctx.fillText(activeUser.name, textX, 165);
+        ctx.restore();
+
+        // Title / Role
+        ctx.save();
+        ctx.font = '600 32px "Outfit", sans-serif';
+        ctx.fillStyle = '#38bdf8';
+        ctx.letterSpacing = '1px';
+        ctx.fillText(activeUser.title.toUpperCase(), textX, 225);
+        ctx.restore();
+
+        // Services Tags
+        ctx.save();
+        ctx.font = '500 22px "JetBrains Mono", monospace';
+        ctx.fillStyle = 'rgba(200, 220, 245, 0.7)';
+        ctx.fillText('DATA PROTECTION • OSINT • CYBERSECURITY', textX, 280);
+        ctx.restore();
+
+        texture.needsUpdate = true;
+      }
+
+      avatarImg.onload = redraw;
+      redraw();
+
+      return { texture, redraw };
+    }
+
+    // 2. 5-Second Animated Website Screen Recording Texture
+    function createScreenRecordingTexture(THREE) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 440;
+      const ctx = canvas.getContext('2d');
+
+      const previewImg = new Image();
+      previewImg.crossOrigin = 'anonymous';
+      previewImg.src = 'website-preview.png';
+
+      const texture = new THREE.CanvasTexture(canvas);
+
+      function update(secProgress) {
+        // secProgress is 0.0 to 1.0 (over 5 seconds)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Tablet Bezel Frame
+        ctx.save();
+        ctx.beginPath();
+        const r = 24;
+        ctx.roundRect ? ctx.roundRect(0, 0, 640, 440, r) : ctx.rect(0, 0, 640, 440);
+        ctx.fillStyle = '#060b14';
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+        ctx.stroke();
+        ctx.restore();
+
+        // Top Browser Header
+        ctx.save();
+        ctx.fillStyle = '#0d1527';
+        ctx.fillRect(4, 4, 632, 54);
+
+        // Recording Dot + REC
+        ctx.beginPath();
+        ctx.arc(32, 31, 7, 0, Math.PI * 2);
+        ctx.fillStyle = (Math.floor(secProgress * 10) % 2 === 0) ? '#ef4444' : '#7f1d1d';
+        ctx.fill();
+
+        ctx.font = 'bold 15px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#ef4444';
+        ctx.fillText('REC', 48, 36);
+
+        // URL bar
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.roundRect ? ctx.roundRect(100, 14, 380, 32, 16) : ctx.fillRect(100, 14, 380, 32);
+        ctx.fill();
+        ctx.font = '500 14px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('🔒 datavigilantes.com', 125, 36);
+
+        // 5s Timer Countdown indicator
+        const currSec = Math.min(5, Math.floor(secProgress * 5) + 1);
+        ctx.fillStyle = '#38bdf8';
+        ctx.fillText(`00:0${currSec} / 00:05`, 500, 36);
+        ctx.restore();
+
+        // Content Viewport: Render live scrolling website
+        const vpX = 8, vpY = 60, vpW = 624, vpH = 336;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(vpX, vpY, vpW, vpH);
+        ctx.clip();
+
+        if (previewImg.complete && previewImg.naturalWidth > 0) {
+          // Smooth vertical scroll back-and-forth across 5 seconds
+          const scrollFactor = (Math.sin(secProgress * Math.PI * 2 - Math.PI / 2) + 1) / 2;
+          const maxScroll = Math.max(0, previewImg.naturalHeight - (previewImg.naturalWidth * (vpH / vpW)));
+          const sy = scrollFactor * maxScroll;
+          const sw = previewImg.naturalWidth;
+          const sh = sw * (vpH / vpW);
+          ctx.drawImage(previewImg, 0, sy, sw, sh, vpX, vpY, vpW, vpH);
+        } else {
+          // Fallback cyber grid screen while loading image
+          ctx.fillStyle = '#0a101f';
+          ctx.fillRect(vpX, vpY, vpW, vpH);
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.15)';
+          ctx.lineWidth = 1;
+          for (let x = vpX; x < vpX + vpW; x += 30) {
+            ctx.beginPath(); ctx.moveTo(x, vpY); ctx.lineTo(x, vpY + vpH); ctx.stroke();
+          }
+          for (let y = vpY; y < vpY + vpH; y += 30) {
+            ctx.beginPath(); ctx.moveTo(vpX, y); ctx.lineTo(vpX + vpW, y); ctx.stroke();
+          }
+          ctx.font = 'bold 24px "Outfit", sans-serif';
+          ctx.fillStyle = '#FFFFFF';
+          ctx.textAlign = 'center';
+          ctx.fillText('DATA VIGILANTES', vpX + vpW / 2, vpY + 120);
+          ctx.font = '16px "JetBrains Mono", monospace';
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillText('CYBERSECURITY & DATA PROTECTION', vpX + vpW / 2, vpY + 160);
+          ctx.textAlign = 'left';
+        }
+
+        // CRT / Scanline shimmer overlay
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+        const scanY = vpY + ((secProgress * 4) % 1) * vpH;
+        ctx.fillRect(vpX, scanY, vpW, 4);
+        ctx.restore();
+
+        // Bottom Progress Bar & Hint
+        ctx.save();
+        ctx.fillStyle = '#080d1a';
+        ctx.fillRect(4, 396, 632, 40);
+
+        // 5-second progress bar
+        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+        ctx.fillRect(16, 406, 608, 4);
+        ctx.fillStyle = '#38bdf8';
+        ctx.shadowColor = '#38bdf8';
+        ctx.shadowBlur = 8;
+        ctx.fillRect(16, 406, 608 * secProgress, 4);
+
+        // Tap hint
+        ctx.font = 'bold 13px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText('▶ TAP TO VISIT WEBSITE', 220, 428);
+        ctx.restore();
+
+        texture.needsUpdate = true;
+      }
+
+      update(0);
+      return { texture, update };
+    }
+
+    // 3. 3D Action Button Texture Builder (Text, Call, Email, LinkedIn)
+    function createActionButtonMesh(THREE, label, icon, bgColor, borderColor, actionFn) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 320;
+      canvas.height = 140;
+      const ctx = canvas.getContext('2d');
+
+      // Draw rounded button pill
+      ctx.beginPath();
+      const r = 28;
+      ctx.roundRect ? ctx.roundRect(8, 8, 304, 124, r) : ctx.rect(8, 8, 304, 124);
+      ctx.fillStyle = bgColor;
+      ctx.fill();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = borderColor;
+      ctx.stroke();
+
+      // Icon & Label
+      ctx.font = '48px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(icon, 80, 84);
+
+      ctx.font = 'bold 36px "Outfit", sans-serif';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, 128, 80);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const geometry = new THREE.PlaneGeometry(0.38, 0.17);
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.userData = { action: actionFn };
+      clickableObjects.push(mesh);
+      return mesh;
+    }
+
+    // ─── Raycaster Interaction for 3D Elements ──────────────────────────────
+    function setup3DInteractions(camera, container) {
+      const raycaster = new window.MINDAR.IMAGE.THREE.Raycaster();
+      const mouse = new window.MINDAR.IMAGE.THREE.Vector2();
+
+      function triggerAction(clientX, clientY) {
+        if (!arRunning || !cardDetected) return;
+        mouse.x = (clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(clickableObjects, false);
+
+        if (intersects.length > 0) {
+          const hit = intersects[0].object;
+          if (hit.userData && hit.userData.action) {
+            // Click bounce feedback
+            const origScale = hit.scale.clone();
+            hit.scale.multiplyScalar(0.88);
+            setTimeout(() => hit.scale.copy(origScale), 150);
+            hit.userData.action();
+          }
+        }
+      }
+
+      container.addEventListener('click', (e) => triggerAction(e.clientX, e.clientY));
+      container.addEventListener('touchend', (e) => {
+        if (e.changedTouches && e.changedTouches.length > 0) {
+          triggerAction(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+        }
+      });
+    }
+
+    // ─── Start AR Session ───────────────────────────────────────────────────
+    async function startAR() {
+      document.getElementById('start-screen').classList.remove('show');
+      document.getElementById('ar-container').classList.add('active');
+      document.getElementById('scan-overlay').classList.add('active');
+
+      try {
+        mindarThree = new window.MINDAR.IMAGE.MindARThree({
+          container: document.getElementById('ar-container'),
+          imageTargetSrc: 'targets.mind',
+          maxTrack: 1,
+          uiLoading: 'no',
+          uiScanning: 'no',
+          uiError: 'no'
+        });
+
+        const { renderer, scene, camera } = mindarThree;
+        const THREE = (window.MINDAR && window.MINDAR.IMAGE && window.MINDAR.IMAGE.THREE) || window.THREE;
+
+        // Container for all 3D hologram card elements
+        const arRoot = new THREE.Group();
+        arRoot.visible = false;
+
+        // ── 1. Card Base Hologram Frame ──────────────────────────────────────
+        // Card dimensions: width = 1.0, height = 0.714
+        const frameGeo = new THREE.PlaneGeometry(1.04, 0.75);
+        const frameEdges = new THREE.EdgesGeometry(frameGeo);
+        const frameLine = new THREE.LineSegments(
+          frameEdges,
+          new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65, linewidth: 2 })
+        );
+        frameLine.position.z = 0.01;
+        arRoot.add(frameLine);
+
+        // ── 2. Top Profile Plaque (Avatar, Name, Role) ───────────────────────
+        const { texture: profileTex } = createProfileBannerTexture(THREE);
+        const profileMesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.96, 0.34),
+          new THREE.MeshBasicMaterial({ map: profileTex, transparent: true, side: THREE.DoubleSide })
+        );
+        profileMesh.position.set(0, 0.54, 0.12);
+        profileMesh.rotation.x = 0.12; // tilt towards user camera
+        arRoot.add(profileMesh);
+
+        // Holographic vertical stem connecting card to profile
+        const stemGeo = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(0, 0.36, 0.02),
+          new THREE.Vector3(0, 0.42, 0.10)
+        ]);
+        const stemLine = new THREE.Line(
+          stemGeo,
+          new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7 })
+        );
+        arRoot.add(stemLine);
+
+        // Glowing cyan rings floating around avatar
+        const ringGeo = new THREE.TorusGeometry(0.12, 0.006, 8, 48);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.8 });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.position.set(-0.31, 0.54, 0.13);
+        arRoot.add(ringMesh);
+
+        // ── 3. 5-Second Website Screen Recording 3D Display ──────────────────
+        const { texture: screenTex, update: updateScreen } = createScreenRecordingTexture(THREE);
+        const screenMesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.72, 0.50),
+          new THREE.MeshBasicMaterial({ map: screenTex, transparent: true, side: THREE.DoubleSide })
+        );
+        // Positioned beside the card in 3D space, angled towards camera
+        screenMesh.position.set(0.92, 0.04, 0.12);
+        screenMesh.rotation.y = -0.25;
+        screenMesh.userData = {
+          action: () => window.open('https://www.datavigilantes.com', '_blank')
+        };
+        clickableObjects.push(screenMesh);
+        arRoot.add(screenMesh);
+
+        // Screen backing frame for depth
+        const screenBack = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.74, 0.52),
+          new THREE.MeshBasicMaterial({ color: 0x030712, side: THREE.DoubleSide })
+        );
+        screenBack.position.set(0.92, 0.04, 0.11);
+        screenBack.rotation.y = -0.25;
+        arRoot.add(screenBack);
+
+        // ── 4. The 4 Interactive Action Buttons (Text, Call, Email, LinkedIn) ─
+        const btnY = -0.48;
+        const btnZ = 0.08;
+
+        // Button 1: Text (SMS)
+        const btnText = createActionButtonMesh(
+          THREE, 'Text', '💬',
+          'rgba(6, 44, 30, 0.95)', '#10b981',
+          () => window.location.href = `sms:${cleanPhone}`
+        );
+        btnText.position.set(-0.60, btnY, btnZ);
+        arRoot.add(btnText);
+
+        // Button 2: Call
+        const btnCall = createActionButtonMesh(
+          THREE, 'Call', '📞',
+          'rgba(50, 10, 16, 0.95)', '#ef4444',
+          () => window.location.href = `tel:${cleanPhone}`
+        );
+        btnCall.position.set(-0.20, btnY, btnZ);
+        arRoot.add(btnCall);
+
+        // Button 3: Email
+        const btnEmail = createActionButtonMesh(
+          THREE, 'Email', '✉️',
+          'rgba(8, 32, 56, 0.95)', '#38bdf8',
+          () => window.location.href = `mailto:${activeUser.email}`
+        );
+        btnEmail.position.set(0.20, btnY, btnZ);
+        arRoot.add(btnEmail);
+
+        // Button 4: LinkedIn
+        const btnLinkedin = createActionButtonMesh(
+          THREE, 'LinkedIn', '💼',
+          'rgba(8, 24, 60, 0.95)', '#0a66c2',
+          () => window.open(activeUser.linkedin, '_blank')
+        );
+        btnLinkedin.position.set(0.60, btnY, btnZ);
+        arRoot.add(btnLinkedin);
+
+        // ── 5. Center DV 3D Hologram Logo Float ──────────────────────────────
+        const logoTex = new THREE.TextureLoader().load('dv-logo.png');
+        // dv-logo.png aspect ratio: 1024x661 (~1.55)
+        const centerLogoMesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.48, 0.31),
+          new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, side: THREE.DoubleSide })
+        );
+        centerLogoMesh.position.set(0, 0, 0.16);
+        arRoot.add(centerLogoMesh);
+
+        // Ambient Lights
+        scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+        const pLight = new THREE.PointLight(0x38bdf8, 2, 8);
+        pLight.position.set(0, 0.5, 1.2);
+        scene.add(pLight);
+
+        // Anchor into MindAR Target 0
+        const anchor = mindarThree.addAnchor(0);
+        anchor.group.add(arRoot);
+
+        // Setup Raycasting
+        setup3DInteractions(camera, document.getElementById('ar-container'));
+
+        // Target Found / Lost Handlers
+        anchor.onTargetFound = () => {
+          cardDetected = true;
+          arRoot.visible = true;
+          document.getElementById('viewfinder').classList.add('hidden');
+          const statusPill = document.getElementById('scan-status-pill');
+          statusPill.classList.add('detected');
+          document.getElementById('scan-status-text').textContent = 'CARD DETECTED ✓';
+          document.getElementById('ar-hud-dock').classList.add('visible');
+        };
+
+        anchor.onTargetLost = () => {
+          cardDetected = false;
+          arRoot.visible = false;
+          document.getElementById('viewfinder').classList.remove('hidden');
+          const statusPill = document.getElementById('scan-status-pill');
+          statusPill.classList.remove('detected');
+          document.getElementById('scan-status-text').textContent = 'SCANNING CARD';
+          document.getElementById('ar-hud-dock').classList.remove('visible');
+        };
+
+        // Start MindAR Engine
+        await mindarThree.start();
+        arRunning = true;
+
+        // Render Loop
+        let startTime = null;
+        renderer.setAnimationLoop((timestamp) => {
+          if (!startTime) startTime = timestamp;
+          const elapsed = (timestamp - startTime) / 1000;
+
+          // 5-second animated screen recording cycle (0.0 to 1.0)
+          const fiveSecCycle = (elapsed % 5.0) / 5.0;
+          updateScreen(fiveSecCycle);
+
+          // Subtle holographic hovering animations
+          const float = Math.sin(elapsed * 2.0) * 0.015;
+          profileMesh.position.z = 0.12 + float;
+          centerLogoMesh.position.z = 0.16 + float * 1.5;
+          ringMesh.rotation.z = elapsed * 1.5;
+
+          // Gentle breathing hover on screen recording
+          screenMesh.position.z = 0.12 + Math.sin(elapsed * 1.8) * 0.01;
+
+          renderer.render(scene, camera);
+        });
+
+      } catch (err) {
+        console.error('AR error:', err);
+        showError(err.message || 'Failed to start camera. Please verify camera permissions.');
+      }
+    }
+
+    function stopAR() {
+      if (mindarThree && arRunning) {
+        mindarThree.stop();
+        mindarThree.renderer.setAnimationLoop(null);
+        arRunning = false;
+        cardDetected = false;
+      }
+      document.getElementById('ar-container').classList.remove('active');
+      document.getElementById('scan-overlay').classList.remove('active');
+      document.getElementById('ar-hud-dock').classList.remove('visible');
+      document.getElementById('start-screen').classList.add('show');
+    }
+
+    function showError(msg) {
+      document.getElementById('error-msg').textContent = msg;
+      document.getElementById('error-screen').classList.add('show');
+    }
+
+    function saveContact() {
+      const vcard = [
+        'BEGIN:VCARD', 'VERSION:3.0',
+        `FN:${activeUser.name}`,
+        `ORG:Data Vigilantes`,
+        `TITLE:${activeUser.title}`,
+        `TEL;TYPE=CELL:${cleanPhone}`,
+        `EMAIL:${activeUser.email}`,
+        `URL:https://www.datavigilantes.com`,
+        `X-SOCIALPROFILE;TYPE=linkedin:${activeUser.linkedin}`,
+        `X-SOCIALPROFILE;TYPE=instagram:${activeUser.instaLink}`,
+        'NOTE:Cybersecurity | Data Protection | OSINT | Consultancy',
+        'END:VCARD'
+      ].join('\r\n');
+
+      const blob = new Blob([vcard], { type: 'text/vcard' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${activeUser.name.replace(/\s+/g, '_')}_DataVigilantes.vcf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // ─── Initialize ─────────────────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      setTimeout(showStartScreen, 600);
+    });
+  </script>
+</body>
+
+</html>
