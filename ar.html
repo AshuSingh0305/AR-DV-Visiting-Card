@@ -1459,6 +1459,103 @@
       return mesh;
     }
 
+    // 4. 3D Services Menu Texture Builder (Left Floating Glass Menu)
+    function createServicesMenuTexture(THREE) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 716;
+      const ctx = canvas.getContext('2d');
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Top Tag
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = '700 15px "JetBrains Mono", monospace';
+      ctx.letterSpacing = '3px';
+      ctx.fillText('DATA VIGILANTES', 36, 52);
+
+      // Main Header Title: "CORE SERVICES"
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 32px "Outfit", sans-serif';
+      ctx.letterSpacing = '1px';
+      ctx.fillText('SERVICES', 36, 96);
+
+      // Glowing Divider Line
+      const grad = ctx.createLinearGradient(36, 115, 476, 115);
+      grad.addColorStop(0, '#38bdf8');
+      grad.addColorStop(0.5, '#E8394D');
+      grad.addColorStop(1, 'rgba(56, 189, 248, 0.1)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(36, 115);
+      ctx.lineTo(476, 115);
+      ctx.stroke();
+
+      // Services List with alternating cyan and red accent dots
+      const services = [
+        { name: 'Data Protection', dot: '#38bdf8', num: '01' },
+        { name: 'OSINT', dot: '#E8394D', num: '02' },
+        { name: 'Consultancy', dot: '#38bdf8', num: '03' },
+        { name: 'Deep Cleaning', dot: '#E8394D', num: '04' },
+        { name: 'Phone Recovery', dot: '#38bdf8', num: '05' },
+        { name: 'Commercial Digital Security', dot: '#E8394D', num: '06' }
+      ];
+
+      const startY = 175;
+      const rowHeight = 82;
+
+      services.forEach((svc, i) => {
+        const y = startY + (i * rowHeight);
+
+        // Index Number
+        ctx.font = '600 13px "JetBrains Mono", monospace';
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.65)';
+        ctx.fillText(svc.num, 36, y);
+
+        // Accent Dot (Outer Glow + Core)
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(80, y - 5, 6, 0, Math.PI * 2);
+        ctx.fillStyle = svc.dot;
+        ctx.shadowColor = svc.dot;
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.restore();
+
+        // Inner white specular pin
+        ctx.beginPath();
+        ctx.arc(80, y - 5, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+
+        // Service Label Text
+        ctx.font = '700 24px "Outfit", sans-serif';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(svc.name, 106, y + 3);
+
+        // Subtle row separator
+        if (i < services.length - 1) {
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(36, y + 34);
+          ctx.lineTo(476, y + 34);
+          ctx.stroke();
+        }
+      });
+
+      // Bottom Cyber Badge
+      ctx.save();
+      ctx.font = '500 12.5px "JetBrains Mono", monospace';
+      ctx.fillStyle = 'rgba(200, 220, 245, 0.55)';
+      ctx.fillText('ENCRYPTED • VERIFIED VIGILANCE', 36, 680);
+      ctx.restore();
+
+      const texture = new THREE.CanvasTexture(canvas);
+      return texture;
+    }
+
     // ─── Raycaster Interaction for 3D Elements ──────────────────────────────
     function setup3DInteractions(camera, container) {
       const raycaster = new window.MINDAR.IMAGE.THREE.Raycaster();
@@ -1495,6 +1592,7 @@
     // ─── State ──────────────────────────────────────────────────────────────
     let mindarThree = null;
     let arRoot = null;
+    let servicesMenu = null;
     let anchor = null;
     let arRunning = false;
     let cardDetected = false;
@@ -1666,8 +1764,54 @@
         anchor = mindarThree.addAnchor(0);
         anchor.group.add(arRoot);
 
+        // ── 6. Left-Aligned Floating 3D Glass Menu (Services) ───────────────
+        servicesMenu = new THREE.Group();
+        servicesMenu.position.set(-1.1, 0, 0);
+        servicesMenu.visible = false; // Only visible when card is found
+
+        // Glass backing panel
+        const glassGeo = new THREE.PlaneGeometry(1.0, 1.4);
+        const glassMat = new THREE.MeshBasicMaterial({
+          color: 0x050a0f,
+          transparent: true,
+          opacity: 0.75,
+          side: THREE.DoubleSide
+        });
+        const glassMesh = new THREE.Mesh(glassGeo, glassMat);
+        glassMesh.frustumCulled = false;
+        servicesMenu.add(glassMesh);
+
+        // Thin glowing cyan border around the glass panel
+        const glassEdges = new THREE.EdgesGeometry(glassGeo);
+        const borderMat = new THREE.LineBasicMaterial({
+          color: 0x38bdf8,
+          transparent: true,
+          opacity: 0.85,
+          linewidth: 2
+        });
+        const glassBorder = new THREE.LineSegments(glassEdges, borderMat);
+        glassBorder.position.z = 0.005;
+        glassBorder.frustumCulled = false;
+        servicesMenu.add(glassBorder);
+
+        // Text canvas plane placed just in front of glass panel (position.z = 0.02)
+        const servicesTex = createServicesMenuTexture(THREE);
+        const textGeo = new THREE.PlaneGeometry(0.96, 1.34);
+        const textMat = new THREE.MeshBasicMaterial({
+          map: servicesTex,
+          transparent: true,
+          side: THREE.DoubleSide
+        });
+        const textMesh = new THREE.Mesh(textGeo, textMat);
+        textMesh.position.z = 0.02;
+        textMesh.frustumCulled = false;
+        servicesMenu.add(textMesh);
+
+        // Add servicesMenu to anchor.group
+        anchor.group.add(servicesMenu);
+
         // Expose debug objects for diagnostics
-        window.__AR = { mindarThree, anchor, arRoot, scene, camera, renderer };
+        window.__AR = { mindarThree, anchor, arRoot, servicesMenu, scene, camera, renderer };
 
         // Setup Raycasting
         setup3DInteractions(camera, document.getElementById('ar-container'));
@@ -1677,6 +1821,7 @@
           directMode = false;
           anchor.group.matrixAutoUpdate = false;
           cardDetected = true;
+          if (servicesMenu) servicesMenu.visible = true;
           document.getElementById('viewfinder').classList.add('hidden');
           const statusPill = document.getElementById('scan-status-pill');
           if (statusPill) {
@@ -1691,6 +1836,7 @@
         anchor.onTargetLost = () => {
           if (directMode) return;
           cardDetected = false;
+          if (servicesMenu) servicesMenu.visible = false;
           document.getElementById('viewfinder').classList.remove('hidden');
           const statusPill = document.getElementById('scan-status-pill');
           if (statusPill) {
@@ -1738,6 +1884,10 @@
             centerLogoMesh.position.z = 0.16 + float * 1.5;
             ringMesh.rotation.z = elapsed * 1.5;
 
+            if (servicesMenu && servicesMenu.visible) {
+              servicesMenu.position.z = Math.sin(elapsed * 1.8) * 0.01;
+            }
+
             renderer.render(scene, camera);
           } catch (renderErr) {
             console.error('AR Render Loop Error:', renderErr);
@@ -1760,6 +1910,7 @@
       if (!anchor || !arRoot) return;
       directMode = true;
       cardDetected = true;
+      if (servicesMenu) servicesMenu.visible = true;
 
       // Position anchor directly in front of camera with comfortable framing
       anchor.group.matrixAutoUpdate = true;
@@ -1801,6 +1952,7 @@
         arRunning = false;
         cardDetected = false;
         directMode = false;
+        if (servicesMenu) servicesMenu.visible = false;
       }
       document.getElementById('ar-container').classList.remove('active');
       document.getElementById('scan-overlay').classList.remove('active');
