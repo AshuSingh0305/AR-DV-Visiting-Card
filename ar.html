@@ -253,8 +253,8 @@
     }
 
     .card-illus-logo {
-      width: 44px;
-      height: 44px;
+      width: 52px;
+      height: 52px;
       object-fit: contain;
       filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.6));
       animation: logoGlow 3s ease-in-out infinite alternate;
@@ -557,25 +557,25 @@
       100% { top: 94%; }
     }
 
-    /* ─── AR Interactive Quick-Action HUD Dock (Bottom) ─── */
+    /* ─── AR Interactive Quick-Action HUD Dock (Bottom - Compact Height) ─── */
     #ar-hud-dock {
       position: fixed;
-      bottom: 20px;
-      left: 14px;
-      right: 14px;
-      background: rgba(8, 14, 26, 0.88);
-      border: 1px solid rgba(74, 128, 196, 0.35);
-      border-radius: 24px;
-      padding: 14px 16px;
+      bottom: 8px;
+      left: 10px;
+      right: 10px;
+      background: rgba(6, 12, 22, 0.94);
+      border: 1px solid rgba(74, 128, 196, 0.4);
+      border-radius: 16px;
+      padding: 7px 10px;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 24px rgba(56, 189, 248, 0.15);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.75), 0 0 16px rgba(56, 189, 248, 0.12);
       z-index: 50;
       transform: translateY(140%);
       transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 5px;
       pointer-events: auto;
     }
 
@@ -583,63 +583,86 @@
       transform: translateY(0);
     }
 
-    .dock-profile-row {
+    .dock-top-bar {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .dock-profile-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
     }
 
     .dock-avatar {
-      width: 44px;
-      height: 44px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid var(--cyan);
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+      border: 1.5px solid var(--cyan);
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.35);
       flex-shrink: 0;
     }
 
     .dock-details {
-      flex: 1;
       min-width: 0;
+      line-height: 1.15;
     }
 
     .dock-name {
-      font-size: 16px;
+      font-size: 12.5px;
       font-weight: 800;
       color: #fff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.2;
     }
 
     .dock-title {
-      font-size: 11.5px;
+      font-size: 9.5px;
       color: var(--cyan);
       font-weight: 500;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .dock-company {
-      font-size: 9.5px;
-      color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+    .dock-top-actions {
       display: flex;
       align-items: center;
       gap: 5px;
+      flex-shrink: 0;
     }
 
-    .dock-company-icon {
-      width: 14px;
-      height: 14px;
-      object-fit: contain;
-      border-radius: 50%;
+    .dock-chip-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #e2e8f0;
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .dock-chip-btn:active {
+      transform: scale(0.92);
+    }
+
+    .dock-chip-btn--save {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
     }
 
     /* Scan Helper Floating Bar */
@@ -762,8 +785,8 @@
 
     .dock-actions-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
     }
 
     .dock-btn {
@@ -771,14 +794,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      padding: 10px 4px;
-      border-radius: 14px;
+      gap: 2px;
+      padding: 5px 2px;
+      border-radius: 9px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.08);
       color: #fff;
       text-decoration: none;
-      font-size: 10.5px;
+      font-size: 9px;
       font-weight: 600;
       transition: all 0.2s ease;
       cursor: pointer;
@@ -789,14 +812,17 @@
     }
 
     .dock-btn-icon {
-      font-size: 18px;
+      font-size: 14px;
       line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .dock-btn--text {
-      background: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.3);
-      color: #6ee7b7;
+    .dock-btn-svg {
+      width: 14px;
+      height: 14px;
+      display: block;
     }
 
     .dock-btn--call {
@@ -805,10 +831,16 @@
       color: #fca5a5;
     }
 
+    .dock-btn--text {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+
     .dock-btn--email {
-      background: rgba(56, 189, 248, 0.12);
-      border-color: rgba(56, 189, 248, 0.3);
-      color: #7dd3fc;
+      background: rgba(234, 67, 53, 0.12);
+      border-color: rgba(234, 67, 53, 0.35);
+      color: #fca5a5;
     }
 
     .dock-btn--linkedin {
@@ -817,30 +849,10 @@
       color: #93c5fd;
     }
 
-    .dock-secondary-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .dock-btn-secondary {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .dock-btn-secondary:active {
-      background: rgba(255, 255, 255, 0.1);
+    .dock-btn--insta {
+      background: rgba(225, 48, 108, 0.15);
+      border-color: rgba(225, 48, 108, 0.4);
+      color: #f472b6;
     }
 
     /* ─── Error Screen ─── */
@@ -988,45 +1000,70 @@
       </button>
     </div>
 
-    <!-- ─── Bottom Interactive HUD Dock ─── -->
+    <!-- ─── Bottom Interactive HUD Dock (Compact Space-Saving Layout) ─── -->
     <div id="ar-hud-dock">
-      <div class="dock-profile-row">
-        <img id="dock-avatar-img" class="dock-avatar" src="siddharth.jpg" alt="Profile" />
-        <div class="dock-details">
-          <div id="dock-name" class="dock-name">Siddharth Chandra</div>
-          <div id="dock-title" class="dock-title">Founder & CEO</div>
-          <div class="dock-company"><img src="dv-logo-square.png" class="dock-company-icon" alt="DV" /> DATA VIGILANTES</div>
+      <div class="dock-top-bar">
+        <div class="dock-profile-inline">
+          <img id="dock-avatar-img" class="dock-avatar" src="siddharth.jpg" alt="Profile" />
+          <div class="dock-details">
+            <div id="dock-name" class="dock-name">Siddharth Chandra</div>
+            <div id="dock-title" class="dock-title">Founder & CEO</div>
+          </div>
+        </div>
+        <div class="dock-top-actions">
+          <a id="dock-btn-website" href="https://www.datavigilantes.com" target="_blank" class="dock-chip-btn">
+            <span>🌐 Web</span>
+          </a>
+          <button onclick="saveContact()" class="dock-chip-btn dock-chip-btn--save">
+            <span>💾 Save</span>
+          </button>
         </div>
       </div>
 
       <div class="dock-actions-grid">
-        <a id="dock-btn-text" href="sms:+917879884975" class="dock-btn dock-btn--text">
-          <span class="dock-btn-icon">💬</span>
-          <span>Text</span>
-        </a>
         <a id="dock-btn-call" href="tel:+917879884975" class="dock-btn dock-btn--call">
           <span class="dock-btn-icon">📞</span>
           <span>Call</span>
         </a>
+        <a id="dock-btn-text" href="sms:+917879884975" class="dock-btn dock-btn--text">
+          <span class="dock-btn-icon">💬</span>
+          <span>Text</span>
+        </a>
         <a id="dock-btn-email" href="mailto:founder@datavigilantes.com" class="dock-btn dock-btn--email">
-          <span class="dock-btn-icon">✉️</span>
-          <span>Email</span>
+          <span class="dock-btn-icon">
+            <svg class="dock-btn-svg" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M4 20h3.5v-9.5L3 7.25V18c0 1.1.9 2 2 2z"/>
+              <path fill="#34A853" d="M20 20c1.1 0 2-.9 2-2V7.25L17.5 10.5V20H20z"/>
+              <path fill="#EA4335" d="M17.5 10.5L12 14.5l-5.5-4V6.5l5.5 4 5.5-4v4z"/>
+              <path fill="#FBBC04" d="M3 7.25L6.5 10.5V6.5L12 2.5 17.5 6.5v4l3.5-3.25L17.5 3.5C17.1 3.2 16.6 3 16 3H8c-.6 0-1.1.2-1.5.5L3 7.25z"/>
+            </svg>
+          </span>
+          <span>Gmail</span>
         </a>
         <a id="dock-btn-linkedin" href="https://www.linkedin.com/company/datavigilantes" target="_blank" class="dock-btn dock-btn--linkedin">
-          <span class="dock-btn-icon">💼</span>
+          <span class="dock-btn-icon">
+            <svg class="dock-btn-svg" viewBox="0 0 24 24">
+              <path fill="#0A66C2" d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+            </svg>
+          </span>
           <span>LinkedIn</span>
         </a>
-      </div>
-
-      <div class="dock-secondary-row">
-        <a id="dock-btn-website" href="https://www.datavigilantes.com" target="_blank" class="dock-btn-secondary">
-          <span>🌐</span>
-          <span>Website</span>
+        <a id="dock-btn-insta" href="https://www.instagram.com/datavigilantes" target="_blank" class="dock-btn dock-btn--insta">
+          <span class="dock-btn-icon">
+            <svg class="dock-btn-svg" viewBox="0 0 24 24">
+              <defs>
+                <radialGradient id="dockIgGrad" cx="30%" cy="107%" r="150%">
+                  <stop offset="0%" stop-color="#fdf497"/>
+                  <stop offset="45%" stop-color="#fd5949"/>
+                  <stop offset="60%" stop-color="#d6249f"/>
+                  <stop offset="90%" stop-color="#285AEB"/>
+                </radialGradient>
+              </defs>
+              <path fill="url(#dockIgGrad)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.441-1.44z"/>
+            </svg>
+          </span>
+          <span>Insta</span>
         </a>
-        <button onclick="saveContact()" class="dock-btn-secondary">
-          <span>💾</span>
-          <span>Save Contact</span>
-        </button>
       </div>
     </div>
   </div>
@@ -1122,6 +1159,8 @@
       document.getElementById('dock-btn-call').href = `tel:${cleanPhone}`;
       document.getElementById('dock-btn-email').href = `mailto:${activeUser.email}`;
       document.getElementById('dock-btn-linkedin').href = activeUser.linkedin;
+      const dockInsta = document.getElementById('dock-btn-insta');
+      if (dockInsta) dockInsta.href = activeUser.instaLink;
 
       // Update active tab button
       document.querySelectorAll('.team-tab-btn').forEach(btn => {
@@ -1290,162 +1329,170 @@
       return { texture, redraw };
     }
 
-    // 2. 5-Second Animated Website Screen Recording Texture
-    function createScreenRecordingTexture(THREE) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 640;
-      canvas.height = 440;
-      const ctx = canvas.getContext('2d');
-
-      const previewImg = new Image();
-      previewImg.crossOrigin = 'anonymous';
-      previewImg.src = 'website-preview.png';
-
-      const texture = new THREE.CanvasTexture(canvas);
-
-      function update(secProgress) {
-        // secProgress is 0.0 to 1.0 (over 5 seconds)
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Tablet Bezel Frame
-        ctx.save();
-        ctx.beginPath();
-        const r = 24;
-        ctx.roundRect ? ctx.roundRect(0, 0, 640, 440, r) : ctx.rect(0, 0, 640, 440);
-        ctx.fillStyle = '#060b14';
-        ctx.fill();
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
-        ctx.stroke();
-        ctx.restore();
-
-        // Top Browser Header
-        ctx.save();
-        ctx.fillStyle = '#0d1527';
-        ctx.fillRect(4, 4, 632, 54);
-
-        // Recording Dot + REC
-        ctx.beginPath();
-        ctx.arc(32, 31, 7, 0, Math.PI * 2);
-        ctx.fillStyle = (Math.floor(secProgress * 10) % 2 === 0) ? '#ef4444' : '#7f1d1d';
-        ctx.fill();
-
-        ctx.font = 'bold 15px "JetBrains Mono", monospace';
-        ctx.fillStyle = '#ef4444';
-        ctx.fillText('REC', 48, 36);
-
-        // URL bar
-        ctx.fillStyle = 'rgba(255,255,255,0.08)';
-        ctx.roundRect ? ctx.roundRect(100, 14, 380, 32, 16) : ctx.fillRect(100, 14, 380, 32);
-        ctx.fill();
-        ctx.font = '500 14px "JetBrains Mono", monospace';
-        ctx.fillStyle = '#94a3b8';
-        ctx.fillText('🔒 datavigilantes.com', 125, 36);
-
-        // 5s Timer Countdown indicator
-        const currSec = Math.min(5, Math.floor(secProgress * 5) + 1);
-        ctx.fillStyle = '#38bdf8';
-        ctx.fillText(`00:0${currSec} / 00:05`, 500, 36);
-        ctx.restore();
-
-        // Content Viewport: Render live scrolling website
-        const vpX = 8, vpY = 60, vpW = 624, vpH = 336;
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(vpX, vpY, vpW, vpH);
-        ctx.clip();
-
-        if (previewImg.complete && previewImg.naturalWidth > 0) {
-          // Smooth vertical scroll back-and-forth across 5 seconds
-          const scrollFactor = (Math.sin(secProgress * Math.PI * 2 - Math.PI / 2) + 1) / 2;
-          const maxScroll = Math.max(0, previewImg.naturalHeight - (previewImg.naturalWidth * (vpH / vpW)));
-          const sy = scrollFactor * maxScroll;
-          const sw = previewImg.naturalWidth;
-          const sh = sw * (vpH / vpW);
-          ctx.drawImage(previewImg, 0, sy, sw, sh, vpX, vpY, vpW, vpH);
-        } else {
-          // Fallback cyber grid screen while loading image
-          ctx.fillStyle = '#0a101f';
-          ctx.fillRect(vpX, vpY, vpW, vpH);
-          ctx.strokeStyle = 'rgba(56, 189, 248, 0.15)';
-          ctx.lineWidth = 1;
-          for (let x = vpX; x < vpX + vpW; x += 30) {
-            ctx.beginPath(); ctx.moveTo(x, vpY); ctx.lineTo(x, vpY + vpH); ctx.stroke();
-          }
-          for (let y = vpY; y < vpY + vpH; y += 30) {
-            ctx.beginPath(); ctx.moveTo(vpX, y); ctx.lineTo(vpX + vpW, y); ctx.stroke();
-          }
-          ctx.font = 'bold 24px "Outfit", sans-serif';
-          ctx.fillStyle = '#FFFFFF';
-          ctx.textAlign = 'center';
-          ctx.fillText('DATA VIGILANTES', vpX + vpW / 2, vpY + 120);
-          ctx.font = '16px "JetBrains Mono", monospace';
-          ctx.fillStyle = '#38bdf8';
-          ctx.fillText('CYBERSECURITY & DATA PROTECTION', vpX + vpW / 2, vpY + 160);
-          ctx.textAlign = 'left';
-        }
-
-        // CRT / Scanline shimmer overlay
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-        const scanY = vpY + ((secProgress * 4) % 1) * vpH;
-        ctx.fillRect(vpX, scanY, vpW, 4);
-        ctx.restore();
-
-        // Bottom Progress Bar & Hint
-        ctx.save();
-        ctx.fillStyle = '#080d1a';
-        ctx.fillRect(4, 396, 632, 40);
-
-        // 5-second progress bar
-        ctx.fillStyle = 'rgba(255,255,255,0.1)';
-        ctx.fillRect(16, 406, 608, 4);
-        ctx.fillStyle = '#38bdf8';
-        ctx.shadowColor = '#38bdf8';
-        ctx.shadowBlur = 8;
-        ctx.fillRect(16, 406, 608 * secProgress, 4);
-
-        // Tap hint
-        ctx.font = 'bold 13px "JetBrains Mono", monospace';
-        ctx.fillStyle = '#cbd5e1';
-        ctx.fillText('▶ TAP TO VISIT WEBSITE', 220, 428);
-        ctx.restore();
-
-        texture.needsUpdate = true;
+    // 2. Real Screen Recording Video Display Builder (DV-website screen recording.mp4)
+    let websiteVideo = null;
+    function createWebsiteVideoMesh(THREE) {
+      if (!websiteVideo) {
+        websiteVideo = document.createElement('video');
+        websiteVideo.src = 'DV-website%20screen%20recording.mp4';
+        websiteVideo.crossOrigin = 'anonymous';
+        websiteVideo.loop = true;
+        websiteVideo.muted = true;
+        websiteVideo.defaultMuted = true;
+        websiteVideo.playsInline = true;
+        websiteVideo.setAttribute('playsinline', '');
+        websiteVideo.setAttribute('webkit-playsinline', '');
+        websiteVideo.setAttribute('muted', '');
+        websiteVideo.preload = 'auto';
       }
 
-      update(0);
-      return { texture, update };
+      const videoTex = new THREE.VideoTexture(websiteVideo);
+      videoTex.minFilter = THREE.LinearFilter;
+      videoTex.magFilter = THREE.LinearFilter;
+      videoTex.format = THREE.RGBAFormat;
+
+      const group = new THREE.Group();
+      group.position.set(0.94, 0.04, 0.12);
+      group.rotation.y = -0.25;
+
+      // 1. Video Screen Mesh
+      const videoMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.78, 0.49),
+        new THREE.MeshBasicMaterial({ map: videoTex, side: THREE.DoubleSide })
+      );
+      videoMesh.position.z = 0.005;
+      videoMesh.frustumCulled = false;
+      videoMesh.userData = {
+        action: () => window.open('https://www.datavigilantes.com', '_blank')
+      };
+      clickableObjects.push(videoMesh);
+      group.add(videoMesh);
+
+      // 2. Dark Bezel Backing Frame
+      const backMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.81, 0.52),
+        new THREE.MeshBasicMaterial({ color: 0x030712, side: THREE.DoubleSide })
+      );
+      backMesh.frustumCulled = false;
+      group.add(backMesh);
+
+      // 3. Glowing Cyan Border
+      const borderEdges = new THREE.EdgesGeometry(new THREE.PlaneGeometry(0.81, 0.52));
+      const borderLine = new THREE.LineSegments(
+        borderEdges,
+        new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.8, linewidth: 2 })
+      );
+      borderLine.position.z = 0.006;
+      borderLine.frustumCulled = false;
+      group.add(borderLine);
+
+      return { group, video: websiteVideo };
     }
 
-    // 3. 3D Action Button Texture Builder (Text, Call, Email, LinkedIn)
-    function createActionButtonMesh(THREE, label, icon, bgColor, borderColor, actionFn) {
+    // 3. 3D Action Button Texture Builder (Call, Text, Gmail, LinkedIn, Insta)
+    function createActionButtonMesh(THREE, label, iconType, bgColor, borderColor, actionFn, width = 0.28, height = 0.15) {
       const canvas = document.createElement('canvas');
-      canvas.width = 320;
+      canvas.width = 300;
       canvas.height = 140;
       const ctx = canvas.getContext('2d');
 
       // Draw rounded button pill
       ctx.beginPath();
-      const r = 28;
-      ctx.roundRect ? ctx.roundRect(8, 8, 304, 124, r) : ctx.rect(8, 8, 304, 124);
+      const r = 26;
+      ctx.roundRect ? ctx.roundRect(8, 8, 284, 124, r) : ctx.rect(8, 8, 284, 124);
       ctx.fillStyle = bgColor;
       ctx.fill();
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 4;
       ctx.strokeStyle = borderColor;
       ctx.stroke();
 
-      // Icon & Label
-      ctx.font = '48px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(icon, 80, 84);
+      // Draw specialized brand icon or emoji
+      const iconCenterX = 66;
+      const iconCenterY = 70;
 
-      ctx.font = 'bold 36px "Outfit", sans-serif';
+      if (iconType === 'gmail') {
+        // Authentic Google Gmail Envelope Icon
+        ctx.save();
+        ctx.translate(iconCenterX - 22, iconCenterY - 17);
+        const w = 44, h = 34;
+        // Background white card
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(4, 4, w - 8, h - 8);
+        // Red top flap / M folds
+        ctx.fillStyle = '#EA4335';
+        ctx.beginPath();
+        ctx.moveTo(0, 0); ctx.lineTo(w / 2, h * 0.62); ctx.lineTo(w, 0);
+        ctx.lineTo(w - 7, 0); ctx.lineTo(w / 2, h * 0.48); ctx.lineTo(7, 0);
+        ctx.closePath();
+        ctx.fill();
+        // Blue left pillar
+        ctx.fillStyle = '#4285F4';
+        ctx.fillRect(0, 4, 8, h - 4);
+        // Green right pillar
+        ctx.fillStyle = '#34A853';
+        ctx.fillRect(w - 8, 4, 8, h - 4);
+        // Yellow bottom/corner fold
+        ctx.fillStyle = '#FBBC04';
+        ctx.beginPath();
+        ctx.moveTo(0, 0); ctx.lineTo(8, 6); ctx.lineTo(8, 0); ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      } else if (iconType === 'linkedin') {
+        // Authentic LinkedIn Icon Badge
+        ctx.save();
+        ctx.translate(iconCenterX - 20, iconCenterY - 20);
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(0, 0, 40, 40, 8) : ctx.rect(0, 0, 40, 40);
+        ctx.fillStyle = '#0A66C2';
+        ctx.fill();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 26px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('in', 20, 20);
+        ctx.restore();
+      } else if (iconType === 'insta') {
+        // Authentic Instagram Camera Icon with Gradient
+        ctx.save();
+        ctx.translate(iconCenterX - 20, iconCenterY - 20);
+        const grad = ctx.createLinearGradient(0, 40, 40, 0);
+        grad.addColorStop(0, '#fdf497');
+        grad.addColorStop(0.3, '#fd5949');
+        grad.addColorStop(0.65, '#d6249f');
+        grad.addColorStop(1, '#285AEB');
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(0, 0, 40, 40, 10) : ctx.rect(0, 0, 40, 40);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        // Camera outer rounded lens
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(20, 20, 9, 0, Math.PI * 2);
+        ctx.stroke();
+        // Flash dot
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(31, 9, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      } else {
+        // Call / Text or fallback emoji
+        ctx.font = '40px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(iconType, iconCenterX, iconCenterY + 2);
+      }
+
+      // Label
+      ctx.font = 'bold 32px "Outfit", sans-serif';
       ctx.fillStyle = '#FFFFFF';
       ctx.textAlign = 'left';
-      ctx.fillText(label, 128, 80);
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, 116, 72);
 
       const texture = new THREE.CanvasTexture(canvas);
-      const geometry = new THREE.PlaneGeometry(0.38, 0.17);
+      const geometry = new THREE.PlaneGeometry(width, height);
       const material = new THREE.MeshBasicMaterial({
         map: texture,
         transparent: true,
@@ -1459,11 +1506,11 @@
       return mesh;
     }
 
-    // 4. 3D Services Menu Texture Builder (Left Floating Glass Menu)
+    // 4. 3D Services Menu Texture Builder (Left Floating Glass Menu with Subtitles)
     function createServicesMenuTexture(THREE) {
       const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 716;
+      canvas.width = 640;
+      canvas.height = 960;
       const ctx = canvas.getContext('2d');
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1472,51 +1519,81 @@
       ctx.fillStyle = '#38bdf8';
       ctx.font = '700 15px "JetBrains Mono", monospace';
       ctx.letterSpacing = '3px';
-      ctx.fillText('DATA VIGILANTES', 36, 52);
+      ctx.fillText('DATA VIGILANTES', 40, 52);
 
-      // Main Header Title: "CORE SERVICES"
+      // Main Header Title: "SERVICES"
       ctx.fillStyle = '#FFFFFF';
       ctx.font = '900 32px "Outfit", sans-serif';
       ctx.letterSpacing = '1px';
-      ctx.fillText('SERVICES', 36, 96);
+      ctx.fillText('SERVICES', 40, 96);
 
       // Glowing Divider Line
-      const grad = ctx.createLinearGradient(36, 115, 476, 115);
+      const grad = ctx.createLinearGradient(40, 115, 600, 115);
       grad.addColorStop(0, '#38bdf8');
       grad.addColorStop(0.5, '#E8394D');
       grad.addColorStop(1, 'rgba(56, 189, 248, 0.1)');
       ctx.strokeStyle = grad;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(36, 115);
-      ctx.lineTo(476, 115);
+      ctx.moveTo(40, 115);
+      ctx.lineTo(600, 115);
       ctx.stroke();
 
-      // Services List with alternating cyan and red accent dots
+      // Services List with alternating cyan & red accent dots and individual descriptions
       const services = [
-        { name: 'Data Protection', dot: '#38bdf8', num: '01' },
-        { name: 'OSINT', dot: '#E8394D', num: '02' },
-        { name: 'Consultancy', dot: '#38bdf8', num: '03' },
-        { name: 'Deep Cleaning', dot: '#E8394D', num: '04' },
-        { name: 'Phone Recovery', dot: '#38bdf8', num: '05' },
-        { name: 'Commercial Digital Security', dot: '#E8394D', num: '06' }
+        { 
+          name: 'Data Protection', 
+          desc: 'End-to-End Privacy & Leak Defense', 
+          dot: '#38bdf8', 
+          num: '01' 
+        },
+        { 
+          name: 'OSINT', 
+          desc: 'Open-Source Intel & Asset Forensics', 
+          dot: '#E8394D', 
+          num: '02' 
+        },
+        { 
+          name: 'Consultancy', 
+          desc: 'Strategic Advisory & Defense Systems', 
+          dot: '#38bdf8', 
+          num: '03' 
+        },
+        { 
+          name: 'Deep Cleaning', 
+          desc: 'Digital Footprint & Breach Eradication', 
+          dot: '#E8394D', 
+          num: '04' 
+        },
+        { 
+          name: 'Stolen/Lost Phone Recovery', 
+          desc: 'IMEI Tracing, Lockout & Device Retrieval', 
+          dot: '#38bdf8', 
+          num: '05' 
+        },
+        { 
+          name: 'Commercial Digital Security', 
+          desc: 'Enterprise Hardening & Network Auditing', 
+          dot: '#E8394D', 
+          num: '06' 
+        }
       ];
 
       const startY = 175;
-      const rowHeight = 82;
+      const rowHeight = 114;
 
       services.forEach((svc, i) => {
         const y = startY + (i * rowHeight);
 
         // Index Number
-        ctx.font = '600 13px "JetBrains Mono", monospace';
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.65)';
-        ctx.fillText(svc.num, 36, y);
+        ctx.font = '700 14px "JetBrains Mono", monospace';
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.7)';
+        ctx.fillText(svc.num, 40, y);
 
         // Accent Dot (Outer Glow + Core)
         ctx.save();
         ctx.beginPath();
-        ctx.arc(80, y - 5, 6, 0, Math.PI * 2);
+        ctx.arc(88, y - 5, 6, 0, Math.PI * 2);
         ctx.fillStyle = svc.dot;
         ctx.shadowColor = svc.dot;
         ctx.shadowBlur = 12;
@@ -1525,22 +1602,27 @@
 
         // Inner white specular pin
         ctx.beginPath();
-        ctx.arc(80, y - 5, 2.5, 0, Math.PI * 2);
+        ctx.arc(88, y - 5, 2.5, 0, Math.PI * 2);
         ctx.fillStyle = '#FFFFFF';
         ctx.fill();
 
-        // Service Label Text
-        ctx.font = '700 24px "Outfit", sans-serif';
+        // Service Label Title
+        ctx.font = '800 24px "Outfit", sans-serif';
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(svc.name, 106, y + 3);
+        ctx.fillText(svc.name, 116, y + 2);
+
+        // Service Description Line
+        ctx.font = '500 15px "Outfit", "Inter", sans-serif';
+        ctx.fillStyle = 'rgba(180, 215, 248, 0.85)';
+        ctx.fillText(svc.desc, 116, y + 28);
 
         // Subtle row separator
         if (i < services.length - 1) {
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
           ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.moveTo(36, y + 34);
-          ctx.lineTo(476, y + 34);
+          ctx.moveTo(40, y + 52);
+          ctx.lineTo(600, y + 52);
           ctx.stroke();
         }
       });
@@ -1548,8 +1630,8 @@
       // Bottom Cyber Badge
       ctx.save();
       ctx.font = '500 12.5px "JetBrains Mono", monospace';
-      ctx.fillStyle = 'rgba(200, 220, 245, 0.55)';
-      ctx.fillText('ENCRYPTED • VERIFIED VIGILANCE', 36, 680);
+      ctx.fillStyle = 'rgba(200, 220, 245, 0.6)';
+      ctx.fillText('ENCRYPTED • VERIFIED VIGILANCE', 40, 920);
       ctx.restore();
 
       const texture = new THREE.CanvasTexture(canvas);
@@ -1679,75 +1761,68 @@
         ringMesh.frustumCulled = false;
         arRoot.add(ringMesh);
 
-        // ── 3. 5-Second Website Screen Recording 3D Display ──────────────────
-        const { texture: screenTex, update: updateScreen } = createScreenRecordingTexture(THREE);
-        const screenMesh = new THREE.Mesh(
-          new THREE.PlaneGeometry(0.72, 0.50),
-          new THREE.MeshBasicMaterial({ map: screenTex, transparent: true, side: THREE.DoubleSide })
-        );
-        screenMesh.position.set(0.92, 0.04, 0.12);
-        screenMesh.rotation.y = -0.25;
-        screenMesh.frustumCulled = false;
-        screenMesh.userData = {
-          action: () => window.open('https://www.datavigilantes.com', '_blank')
-        };
-        clickableObjects.push(screenMesh);
-        arRoot.add(screenMesh);
+        // ── 3. Real Website Screen Recording Video Display (DV-website screen recording.mp4) ─
+        const { group: videoDisplayGroup } = createWebsiteVideoMesh(THREE);
+        arRoot.add(videoDisplayGroup);
 
-        // Screen backing frame for depth
-        const screenBack = new THREE.Mesh(
-          new THREE.PlaneGeometry(0.74, 0.52),
-          new THREE.MeshBasicMaterial({ color: 0x030712, side: THREE.DoubleSide })
-        );
-        screenBack.position.set(0.92, 0.04, 0.11);
-        screenBack.rotation.y = -0.25;
-        screenBack.frustumCulled = false;
-        arRoot.add(screenBack);
-
-        // ── 4. The 4 Interactive Action Buttons (Text, Call, Email, LinkedIn) ─
+        // ── 4. The 5 Interactive Action Buttons (Call, Text, Gmail, LinkedIn, Insta) ─
         const btnY = -0.48;
         const btnZ = 0.08;
 
-        // Button 1: Text (SMS)
-        const btnText = createActionButtonMesh(
-          THREE, 'Text', '💬',
-          'rgba(6, 44, 30, 0.95)', '#10b981',
-          () => window.location.href = `sms:${(activeUser.phone || '').replace(/\s+/g, '')}`
-        );
-        btnText.position.set(-0.60, btnY, btnZ);
-        arRoot.add(btnText);
-
-        // Button 2: Call
+        // Button 1: Call
         const btnCall = createActionButtonMesh(
           THREE, 'Call', '📞',
           'rgba(50, 10, 16, 0.95)', '#ef4444',
-          () => window.location.href = `tel:${(activeUser.phone || '').replace(/\s+/g, '')}`
+          () => window.location.href = `tel:${(activeUser.phone || '').replace(/\s+/g, '')}`,
+          0.28, 0.15
         );
-        btnCall.position.set(-0.20, btnY, btnZ);
+        btnCall.position.set(-0.60, btnY, btnZ);
         arRoot.add(btnCall);
 
-        // Button 3: Email
-        const btnEmail = createActionButtonMesh(
-          THREE, 'Email', '✉️',
-          'rgba(8, 32, 56, 0.95)', '#38bdf8',
-          () => window.location.href = `mailto:${activeUser.email}`
+        // Button 2: Text (SMS)
+        const btnText = createActionButtonMesh(
+          THREE, 'Text', '💬',
+          'rgba(6, 44, 30, 0.95)', '#10b981',
+          () => window.location.href = `sms:${(activeUser.phone || '').replace(/\s+/g, '')}`,
+          0.28, 0.15
         );
-        btnEmail.position.set(0.20, btnY, btnZ);
+        btnText.position.set(-0.30, btnY, btnZ);
+        arRoot.add(btnText);
+
+        // Button 3: Gmail
+        const btnEmail = createActionButtonMesh(
+          THREE, 'Gmail', 'gmail',
+          'rgba(50, 15, 15, 0.95)', '#ea4335',
+          () => window.location.href = `mailto:${activeUser.email}`,
+          0.28, 0.15
+        );
+        btnEmail.position.set(0.00, btnY, btnZ);
         arRoot.add(btnEmail);
 
         // Button 4: LinkedIn
         const btnLinkedin = createActionButtonMesh(
-          THREE, 'LinkedIn', '💼',
+          THREE, 'LinkedIn', 'linkedin',
           'rgba(8, 24, 60, 0.95)', '#0a66c2',
-          () => window.open(activeUser.linkedin, '_blank')
+          () => window.open(activeUser.linkedin, '_blank'),
+          0.28, 0.15
         );
-        btnLinkedin.position.set(0.60, btnY, btnZ);
+        btnLinkedin.position.set(0.30, btnY, btnZ);
         arRoot.add(btnLinkedin);
 
-        // ── 5. Center DV 3D Hologram Logo Float ──────────────────────────────
+        // Button 5: Instagram
+        const btnInsta = createActionButtonMesh(
+          THREE, 'Insta', 'insta',
+          'rgba(50, 12, 35, 0.95)', '#e1306c',
+          () => window.open(activeUser.instaLink, '_blank'),
+          0.28, 0.15
+        );
+        btnInsta.position.set(0.60, btnY, btnZ);
+        arRoot.add(btnInsta);
+
+        // ── 5. Center DV 3D Hologram Logo Float (Slightly Bigger) ────────────
         const logoTex = new THREE.TextureLoader().load('dv-logo.png');
         const centerLogoMesh = new THREE.Mesh(
-          new THREE.PlaneGeometry(0.48, 0.31),
+          new THREE.PlaneGeometry(0.56, 0.36),
           new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, side: THREE.DoubleSide })
         );
         centerLogoMesh.position.set(0, 0, 0.16);
@@ -1764,17 +1839,17 @@
         anchor = mindarThree.addAnchor(0);
         anchor.group.add(arRoot);
 
-        // ── 6. Left-Aligned Floating 3D Glass Menu (Services) ───────────────
+        // ── 6. Left-Aligned Floating 3D Glass Menu (Services with Subtitles) ─
         servicesMenu = new THREE.Group();
-        servicesMenu.position.set(-1.1, 0, 0);
+        servicesMenu.position.set(-1.14, 0, 0);
         servicesMenu.visible = false; // Only visible when card is found
 
         // Glass backing panel
-        const glassGeo = new THREE.PlaneGeometry(1.0, 1.4);
+        const glassGeo = new THREE.PlaneGeometry(1.08, 1.56);
         const glassMat = new THREE.MeshBasicMaterial({
           color: 0x050a0f,
           transparent: true,
-          opacity: 0.75,
+          opacity: 0.78,
           side: THREE.DoubleSide
         });
         const glassMesh = new THREE.Mesh(glassGeo, glassMat);
@@ -1794,9 +1869,9 @@
         glassBorder.frustumCulled = false;
         servicesMenu.add(glassBorder);
 
-        // Text canvas plane placed just in front of glass panel (position.z = 0.02)
+        // Text canvas plane placed in front of glass panel (position.z = 0.02)
         const servicesTex = createServicesMenuTexture(THREE);
-        const textGeo = new THREE.PlaneGeometry(0.96, 1.34);
+        const textGeo = new THREE.PlaneGeometry(1.04, 1.52);
         const textMat = new THREE.MeshBasicMaterial({
           map: servicesTex,
           transparent: true,
@@ -1822,6 +1897,7 @@
           anchor.group.matrixAutoUpdate = false;
           cardDetected = true;
           if (servicesMenu) servicesMenu.visible = true;
+          if (websiteVideo) websiteVideo.play().catch(() => {});
           document.getElementById('viewfinder').classList.add('hidden');
           const statusPill = document.getElementById('scan-status-pill');
           if (statusPill) {
@@ -1837,6 +1913,7 @@
           if (directMode) return;
           cardDetected = false;
           if (servicesMenu) servicesMenu.visible = false;
+          if (websiteVideo) websiteVideo.pause();
           document.getElementById('viewfinder').classList.remove('hidden');
           const statusPill = document.getElementById('scan-status-pill');
           if (statusPill) {
@@ -1866,24 +1943,17 @@
 
         // Render Loop
         let startTime = null;
-        let lastScreenUpdate = 0;
         renderer.setAnimationLoop((timestamp) => {
           try {
             if (!startTime) startTime = timestamp;
             const elapsed = (timestamp - startTime) / 1000;
-
-            // Throttle 2D canvas texture updates to ~20 FPS (50ms) to ensure smooth 60fps render
-            if (timestamp - lastScreenUpdate > 50) {
-              const fiveSecCycle = (elapsed % 5.0) / 5.0;
-              updateScreen(fiveSecCycle);
-              lastScreenUpdate = timestamp;
-            }
 
             const float = Math.sin(elapsed * 2.0) * 0.015;
             profileMesh.position.z = 0.12 + float;
             centerLogoMesh.position.z = 0.16 + float * 1.5;
             ringMesh.rotation.z = elapsed * 1.5;
 
+            // Micro-animation for floating glass menu
             if (servicesMenu && servicesMenu.visible) {
               servicesMenu.position.z = Math.sin(elapsed * 1.8) * 0.01;
             }
@@ -1911,6 +1981,7 @@
       directMode = true;
       cardDetected = true;
       if (servicesMenu) servicesMenu.visible = true;
+      if (websiteVideo) websiteVideo.play().catch(() => {});
 
       // Position anchor directly in front of camera with comfortable framing
       anchor.group.matrixAutoUpdate = true;
@@ -1953,6 +2024,10 @@
         cardDetected = false;
         directMode = false;
         if (servicesMenu) servicesMenu.visible = false;
+        if (websiteVideo) {
+          websiteVideo.pause();
+          try { websiteVideo.currentTime = 0; } catch (e) {}
+        }
       }
       document.getElementById('ar-container').classList.remove('active');
       document.getElementById('scan-overlay').classList.remove('active');
@@ -1975,6 +2050,7 @@
 
 
     function saveContact() {
+      const cleanPhone = (activeUser.phone || '').replace(/\s+/g, '');
       const vcard = [
         'BEGIN:VCARD', 'VERSION:3.0',
         `FN:${activeUser.name}`,
