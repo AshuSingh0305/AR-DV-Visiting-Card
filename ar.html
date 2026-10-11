@@ -14,6 +14,12 @@
 
   <!-- MindAR + Three.js (all-in-one UMD bundle) -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.5/dist/mindar-image-three.prod.js"></script>
+  <script>
+    if (!window.THREE && window.MINDAR && window.MINDAR.IMAGE && window.MINDAR.IMAGE.THREE) {
+      window.THREE = window.MINDAR.IMAGE.THREE;
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.136.0/examples/js/loaders/GLTFLoader.js"></script>
 
   <style>
     *,
@@ -47,6 +53,17 @@
       font-family: 'Outfit', -apple-system, sans-serif;
       color: var(--text);
       user-select: none;
+    }
+
+    #phys-card {
+      width: 333px;
+      height: 414px;
+    }
+
+    #buttons-row,
+    #pill-row,
+    #ar-hud-dock {
+      display: none !important;
     }
 
     /* ─── Loading Screen ─── */
@@ -958,9 +975,6 @@
       <button id="btn-preview-3d" class="btn-start-secondary" onclick="reveal3DCardDirect()">
         <span>✨ View 3D Hologram (No Card)</span>
       </button>
-      <button class="btn-link-target" onclick="toggleTargetModal(true)">
-        <span>🖼️ View Target Card Front</span>
-      </button>
     </div>
   </div>
 
@@ -990,95 +1004,17 @@
       <div class="reticle-laser"></div>
     </div>
 
-    <!-- ─── Scan Helper Bar (View Target / Reveal Hologram) ─── -->
+    <!-- ─── Scan Helper Bar (Reveal Hologram) ─── -->
     <div class="scan-helper-bar" id="scan-helper-bar">
-      <button class="scan-pill-btn" onclick="toggleTargetModal(true)">
-        <span>🖼️ Target Card</span>
-      </button>
       <button class="scan-pill-btn scan-pill-btn--reveal" onclick="forceRevealCard()">
         <span>✨ Reveal 3D Card</span>
       </button>
     </div>
 
-    <!-- ─── Bottom Interactive HUD Dock (Compact Space-Saving Layout) ─── -->
-    <div id="ar-hud-dock">
-      <div class="dock-top-bar">
-        <div class="dock-profile-inline">
-          <img id="dock-avatar-img" class="dock-avatar" src="siddharth.jpg" alt="Profile" />
-          <div class="dock-details">
-            <div id="dock-name" class="dock-name">Siddharth Chandra</div>
-            <div id="dock-title" class="dock-title">Founder & CEO</div>
-          </div>
-        </div>
-        <div class="dock-top-actions">
-          <a id="dock-btn-website" href="https://www.datavigilantes.com" target="_blank" class="dock-chip-btn">
-            <span>🌐 Web</span>
-          </a>
-          <button onclick="saveContact()" class="dock-chip-btn dock-chip-btn--save">
-            <span>💾 Save</span>
-          </button>
-        </div>
-      </div>
 
-      <div class="dock-actions-grid">
-        <a id="dock-btn-call" href="tel:+917879884975" class="dock-btn dock-btn--call">
-          <span class="dock-btn-icon">📞</span>
-          <span>Call</span>
-        </a>
-        <a id="dock-btn-text" href="sms:+917879884975" class="dock-btn dock-btn--text">
-          <span class="dock-btn-icon">💬</span>
-          <span>Text</span>
-        </a>
-        <a id="dock-btn-email" href="mailto:founder@datavigilantes.com" class="dock-btn dock-btn--email">
-          <span class="dock-btn-icon">
-            <svg class="dock-btn-svg" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M4 20h3.5v-9.5L3 7.25V18c0 1.1.9 2 2 2z"/>
-              <path fill="#34A853" d="M20 20c1.1 0 2-.9 2-2V7.25L17.5 10.5V20H20z"/>
-              <path fill="#EA4335" d="M17.5 10.5L12 14.5l-5.5-4V6.5l5.5 4 5.5-4v4z"/>
-              <path fill="#FBBC04" d="M3 7.25L6.5 10.5V6.5L12 2.5 17.5 6.5v4l3.5-3.25L17.5 3.5C17.1 3.2 16.6 3 16 3H8c-.6 0-1.1.2-1.5.5L3 7.25z"/>
-            </svg>
-          </span>
-          <span>Gmail</span>
-        </a>
-        <a id="dock-btn-linkedin" href="https://www.linkedin.com/company/datavigilantes" target="_blank" class="dock-btn dock-btn--linkedin">
-          <span class="dock-btn-icon">
-            <svg class="dock-btn-svg" viewBox="0 0 24 24">
-              <path fill="#0A66C2" d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-            </svg>
-          </span>
-          <span>LinkedIn</span>
-        </a>
-        <a id="dock-btn-insta" href="https://www.instagram.com/datavigilantes" target="_blank" class="dock-btn dock-btn--insta">
-          <span class="dock-btn-icon">
-            <svg class="dock-btn-svg" viewBox="0 0 24 24">
-              <defs>
-                <radialGradient id="dockIgGrad" cx="30%" cy="107%" r="150%">
-                  <stop offset="0%" stop-color="#fdf497"/>
-                  <stop offset="45%" stop-color="#fd5949"/>
-                  <stop offset="60%" stop-color="#d6249f"/>
-                  <stop offset="90%" stop-color="#285AEB"/>
-                </radialGradient>
-              </defs>
-              <path fill="url(#dockIgGrad)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.441-1.44z"/>
-            </svg>
-          </span>
-          <span>Insta</span>
-        </a>
-      </div>
-    </div>
   </div>
 
-  <!-- ─── Target Business Card Preview Modal ─── -->
-  <div id="target-modal" class="target-modal" onclick="toggleTargetModal(false)">
-    <div class="target-modal-card" onclick="event.stopPropagation()">
-      <div class="target-modal-header">
-        <span>PHYSICAL CARD TARGET FRONT</span>
-        <button class="modal-close-btn" onclick="toggleTargetModal(false)">✕</button>
-      </div>
-      <img src="DV-front-side-card.png" class="target-modal-img" alt="Target Business Card" />
-      <p class="target-modal-tip">Point your device camera at this front side of the card to anchor the 3D hologram directly in space!</p>
-    </div>
-  </div>
+
 
   <!-- ─── Error Screen ─── -->
   <div id="error-screen">
@@ -1145,22 +1081,12 @@
       const cleanPhone = (activeUser.phone || '').replace(/\s+/g, '');
 
       // Start Screen preview
-      document.getElementById('start-avatar').src = activeUser.photo;
-      document.getElementById('start-name').textContent = activeUser.name;
-      document.getElementById('start-role').textContent = activeUser.title;
-
-      // AR Dock items
-      document.getElementById('dock-avatar-img').src = activeUser.photo;
-      document.getElementById('dock-name').textContent = activeUser.name;
-      document.getElementById('dock-title').textContent = activeUser.title;
-
-      // Contact action buttons
-      document.getElementById('dock-btn-text').href = `sms:${cleanPhone}`;
-      document.getElementById('dock-btn-call').href = `tel:${cleanPhone}`;
-      document.getElementById('dock-btn-email').href = `mailto:${activeUser.email}`;
-      document.getElementById('dock-btn-linkedin').href = activeUser.linkedin;
-      const dockInsta = document.getElementById('dock-btn-insta');
-      if (dockInsta) dockInsta.href = activeUser.instaLink;
+      const startAvatar = document.getElementById('start-avatar');
+      if (startAvatar) startAvatar.src = activeUser.photo;
+      const startName = document.getElementById('start-name');
+      if (startName) startName.textContent = activeUser.name;
+      const startRole = document.getElementById('start-role');
+      if (startRole) startRole.textContent = activeUser.title;
 
       // Update active tab button
       document.querySelectorAll('.team-tab-btn').forEach(btn => {
@@ -1410,32 +1336,57 @@
       const iconCenterX = 66;
       const iconCenterY = 70;
 
-      if (iconType === 'gmail') {
-        // Authentic Google Gmail Envelope Icon
+      if (iconType === 'gmail' || iconType === 'email') {
+        // Standard, crisp, highly recognizable Gmail Envelope Icon with "M"
         ctx.save();
-        ctx.translate(iconCenterX - 22, iconCenterY - 17);
-        const w = 44, h = 34;
-        // Background white card
+        ctx.translate(iconCenterX - 22, iconCenterY - 16);
+        const w = 44, h = 32, r = 5;
+
+        // Base white envelope card
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(4, 4, w - 8, h - 8);
-        // Red top flap / M folds
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(0, 0, w, h, r) : ctx.rect(0, 0, w, h);
+        ctx.fill();
+        ctx.strokeStyle = '#D1D5DB';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Left blue vertical stripe
+        ctx.fillStyle = '#4285F4';
+        ctx.fillRect(4, 5, 8, h - 9);
+
+        // Right green vertical stripe
+        ctx.fillStyle = '#34A853';
+        ctx.fillRect(w - 12, 5, 8, h - 9);
+
+        // Center red top M-shape flap
         ctx.fillStyle = '#EA4335';
         ctx.beginPath();
-        ctx.moveTo(0, 0); ctx.lineTo(w / 2, h * 0.62); ctx.lineTo(w, 0);
-        ctx.lineTo(w - 7, 0); ctx.lineTo(w / 2, h * 0.48); ctx.lineTo(7, 0);
+        ctx.moveTo(4, 5);
+        ctx.lineTo(w / 2, h * 0.60);
+        ctx.lineTo(w - 4, 5);
+        ctx.lineTo(w - 11, 5);
+        ctx.lineTo(w / 2, h * 0.44);
+        ctx.lineTo(11, 5);
         ctx.closePath();
         ctx.fill();
-        // Blue left pillar
-        ctx.fillStyle = '#4285F4';
-        ctx.fillRect(0, 4, 8, h - 4);
-        // Green right pillar
-        ctx.fillStyle = '#34A853';
-        ctx.fillRect(w - 8, 4, 8, h - 4);
-        // Yellow bottom/corner fold
+
+        // Yellow corners
         ctx.fillStyle = '#FBBC04';
         ctx.beginPath();
-        ctx.moveTo(0, 0); ctx.lineTo(8, 6); ctx.lineTo(8, 0); ctx.closePath();
+        ctx.moveTo(4, 5);
+        ctx.lineTo(12, 11);
+        ctx.lineTo(12, 5);
+        ctx.closePath();
         ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(w - 4, 5);
+        ctx.lineTo(w - 12, 11);
+        ctx.lineTo(w - 12, 5);
+        ctx.closePath();
+        ctx.fill();
+
         ctx.restore();
       } else if (iconType === 'linkedin') {
         // Authentic LinkedIn Icon Badge
@@ -1502,6 +1453,128 @@
       const mesh = new THREE.Mesh(geometry, material);
       mesh.frustumCulled = false;
       mesh.userData = { action: actionFn };
+      clickableObjects.push(mesh);
+      return mesh;
+    }
+
+    // 3B. 3D "Save Contact" Floating Tag Builder (Phone, Email, Instagram Icons)
+    function createSaveContactTagMesh(THREE) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 620;
+      canvas.height = 140;
+      const ctx = canvas.getContext('2d');
+
+      // Rounded background pill with glowing cyan border
+      ctx.beginPath();
+      const r = 32;
+      ctx.roundRect ? ctx.roundRect(8, 8, 604, 124, r) : ctx.rect(8, 8, 604, 124);
+      
+      // Cyber glass gradient background
+      const gradBg = ctx.createLinearGradient(0, 0, 604, 0);
+      gradBg.addColorStop(0, 'rgba(6, 16, 32, 0.95)');
+      gradBg.addColorStop(0.5, 'rgba(10, 28, 52, 0.95)');
+      gradBg.addColorStop(1, 'rgba(6, 16, 32, 0.95)');
+      ctx.fillStyle = gradBg;
+      ctx.fill();
+
+      // Glowing Cyan Border
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#38bdf8';
+      ctx.stroke();
+
+      // Three small icons side by side: Phone, Email, Instagram
+      // 1. Phone Icon (Green circular badge)
+      ctx.save();
+      const phoneX = 54, phoneY = 70;
+      ctx.beginPath();
+      ctx.arc(phoneX, phoneY, 19, 0, Math.PI * 2);
+      ctx.fillStyle = '#10b981';
+      ctx.fill();
+      ctx.font = '22px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('📞', phoneX, phoneY + 2);
+      ctx.restore();
+
+      // 2. Email / Gmail Icon (Clean standard envelope)
+      ctx.save();
+      const mailX = 106, mailY = 70;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(mailX - 18, mailY - 13, 36, 26, 4) : ctx.rect(mailX - 18, mailY - 13, 36, 26);
+      ctx.fill();
+      ctx.strokeStyle = '#CBD5E1';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = '#EA4335';
+      ctx.beginPath();
+      ctx.moveTo(mailX - 16, mailY - 11);
+      ctx.lineTo(mailX, mailY + 2);
+      ctx.lineTo(mailX + 16, mailY - 11);
+      ctx.lineTo(mailX + 11, mailY - 11);
+      ctx.lineTo(mailX, mailY - 2);
+      ctx.lineTo(mailX - 11, mailY - 11);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#4285F4';
+      ctx.fillRect(mailX - 16, mailY - 10, 5, 20);
+      ctx.fillStyle = '#34A853';
+      ctx.fillRect(mailX + 11, mailY - 10, 5, 20);
+      ctx.restore();
+
+      // 3. Instagram Icon (Instagram gradient rounded badge)
+      ctx.save();
+      const igX = 158, igY = 70;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(igX - 17, igY - 17, 34, 34, 9) : ctx.rect(igX - 17, igY - 17, 34, 34);
+      const igGrad = ctx.createLinearGradient(igX - 17, igY + 17, igX + 17, igY - 17);
+      igGrad.addColorStop(0, '#fdf497');
+      igGrad.addColorStop(0.3, '#fd5949');
+      igGrad.addColorStop(0.65, '#d6249f');
+      igGrad.addColorStop(1, '#285AEB');
+      ctx.fillStyle = igGrad;
+      ctx.fill();
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(igX, igY, 7.5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(igX + 9, igY - 9, 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Vertical separator
+      ctx.strokeStyle = 'rgba(74, 128, 196, 0.45)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(200, 34);
+      ctx.lineTo(200, 106);
+      ctx.stroke();
+
+      // Label: "Save Contact"
+      ctx.font = '700 36px "Outfit", sans-serif';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Save Contact', 222, 70);
+
+      // Save badge
+      ctx.font = '30px sans-serif';
+      ctx.fillText('💾', 526, 72);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const geometry = new THREE.PlaneGeometry(0.72, 0.16);
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.frustumCulled = false;
+      mesh.userData = { action: () => saveContact() };
       clickableObjects.push(mesh);
       return mesh;
     }
@@ -1676,6 +1749,7 @@
     let arRoot = null;
     let servicesMenu = null;
     let anchor = null;
+    let arModel = null;
     let arRunning = false;
     let cardDetected = false;
     let directMode = false;
@@ -1714,6 +1788,10 @@
 
         const { renderer, scene, camera } = mindarThree;
         const THREE = (window.MINDAR && window.MINDAR.IMAGE && window.MINDAR.IMAGE.THREE) || window.THREE;
+        if (!window.THREE) window.THREE = THREE;
+        if (!THREE.GLTFLoader && window.THREE && window.THREE.GLTFLoader) {
+          THREE.GLTFLoader = window.THREE.GLTFLoader;
+        }
 
         // Container for all 3D hologram card elements
         arRoot = new THREE.Group();
@@ -1765,28 +1843,33 @@
         const { group: videoDisplayGroup } = createWebsiteVideoMesh(THREE);
         arRoot.add(videoDisplayGroup);
 
-        // ── 4. The 5 Interactive Action Buttons (Call, Text, Gmail, LinkedIn, Insta) ─
-        const btnY = -0.48;
-        const btnZ = 0.08;
+        // ── 4. Floating 3D "Save Contact" Tag (Above Card / Near Top Edge) ───
+        const saveContactTag = createSaveContactTagMesh(THREE);
+        saveContactTag.position.set(0, 0.77, 0.15);
+        arRoot.add(saveContactTag);
 
-        // Button 1: Call
+        // ── 5. Repositioned "Call" Tag (Overlapping left side of card-zone & top right of Services) ───
         const btnCall = createActionButtonMesh(
           THREE, 'Call', '📞',
           'rgba(50, 10, 16, 0.95)', '#ef4444',
           () => window.location.href = `tel:${(activeUser.phone || '').replace(/\s+/g, '')}`,
-          0.28, 0.15
+          0.30, 0.14
         );
-        btnCall.position.set(-0.60, btnY, btnZ);
+        btnCall.position.set(-0.56, 0.74, 0.14);
         arRoot.add(btnCall);
+
+        // ── 6. Interactive Bottom Action Buttons (Text, Gmail, LinkedIn, Insta) ─
+        const btnY = -0.48;
+        const btnZ = 0.08;
 
         // Button 2: Text (SMS)
         const btnText = createActionButtonMesh(
           THREE, 'Text', '💬',
           'rgba(6, 44, 30, 0.95)', '#10b981',
           () => window.location.href = `sms:${(activeUser.phone || '').replace(/\s+/g, '')}`,
-          0.28, 0.15
+          0.26, 0.14
         );
-        btnText.position.set(-0.30, btnY, btnZ);
+        btnText.position.set(-0.45, btnY, btnZ);
         arRoot.add(btnText);
 
         // Button 3: Gmail
@@ -1794,9 +1877,9 @@
           THREE, 'Gmail', 'gmail',
           'rgba(50, 15, 15, 0.95)', '#ea4335',
           () => window.location.href = `mailto:${activeUser.email}`,
-          0.28, 0.15
+          0.26, 0.14
         );
-        btnEmail.position.set(0.00, btnY, btnZ);
+        btnEmail.position.set(-0.15, btnY, btnZ);
         arRoot.add(btnEmail);
 
         // Button 4: LinkedIn
@@ -1804,9 +1887,9 @@
           THREE, 'LinkedIn', 'linkedin',
           'rgba(8, 24, 60, 0.95)', '#0a66c2',
           () => window.open(activeUser.linkedin, '_blank'),
-          0.28, 0.15
+          0.26, 0.14
         );
-        btnLinkedin.position.set(0.30, btnY, btnZ);
+        btnLinkedin.position.set(0.15, btnY, btnZ);
         arRoot.add(btnLinkedin);
 
         // Button 5: Instagram
@@ -1814,30 +1897,81 @@
           THREE, 'Insta', 'insta',
           'rgba(50, 12, 35, 0.95)', '#e1306c',
           () => window.open(activeUser.instaLink, '_blank'),
-          0.28, 0.15
+          0.26, 0.14
         );
-        btnInsta.position.set(0.60, btnY, btnZ);
+        btnInsta.position.set(0.45, btnY, btnZ);
         arRoot.add(btnInsta);
-
-        // ── 5. Center DV 3D Hologram Logo Float (Slightly Bigger) ────────────
-        const logoTex = new THREE.TextureLoader().load('dv-logo.png');
-        const centerLogoMesh = new THREE.Mesh(
-          new THREE.PlaneGeometry(0.56, 0.36),
-          new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, side: THREE.DoubleSide })
-        );
-        centerLogoMesh.position.set(0, 0, 0.16);
-        centerLogoMesh.frustumCulled = false;
-        arRoot.add(centerLogoMesh);
-
-        // Ambient Lights
-        scene.add(new THREE.AmbientLight(0xffffff, 0.85));
-        const pLight = new THREE.PointLight(0x38bdf8, 2, 8);
-        pLight.position.set(0, 0.5, 1.2);
-        scene.add(pLight);
 
         // Anchor into MindAR Target 0
         anchor = mindarThree.addAnchor(0);
         anchor.group.add(arRoot);
+
+        // ── 5. THREE.DirectionalLight for 3D model textures, depth & shadows ──
+        const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
+        dirLight.position.set(0, 3, 5);
+        scene.add(dirLight);
+
+        const dirFillLight = new THREE.DirectionalLight(0x38bdf8, 1.0);
+        dirFillLight.position.set(-2, -2, 3);
+        scene.add(dirFillLight);
+
+        // Ambient & Point Lights
+        scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+        const pLight = new THREE.PointLight(0x38bdf8, 2, 8);
+        pLight.position.set(0, 0.5, 1.2);
+        scene.add(pLight);
+
+        // ── 6. 3D GLTF Model Loaded via THREE.GLTFLoader ─────────────────────
+        const gltfLoader = new THREE.GLTFLoader();
+        gltfLoader.load(
+          'model.glb',
+          (gltf) => {
+            // Apply scale (0.1, 0.1, 0.1) as Sketchfab models are often scaled too large
+            gltf.scene.scale.set(0.1, 0.1, 0.1);
+
+            // Hover above the card just like previous logo
+            gltf.scene.position.set(0, 0, 0.35);
+
+            // Ensure the model rotates to face the camera appropriately
+            gltf.scene.rotation.set(0, 0, 0);
+
+            // Traverse meshes so all materials, textures, and double-sides display cleanly
+            gltf.scene.traverse((child) => {
+              if (child.isMesh) {
+                child.frustumCulled = false;
+                if (child.material) {
+                  child.material.side = THREE.DoubleSide;
+                }
+              }
+            });
+
+            // Add gltf.scene to anchor.group
+            anchor.group.add(gltf.scene);
+            arModel = gltf.scene;
+            console.log('3D GLTF model loaded successfully into anchor.group:', gltf);
+          },
+          (xhr) => {
+            if (xhr.total) {
+              console.log(`Loading 3D model: ${Math.round((xhr.loaded / xhr.total) * 100)}%`);
+            }
+          },
+          (error) => {
+            console.warn('Could not load model.glb, trying matilda/scene.gltf fallback:', error);
+            gltfLoader.load('matilda/scene.gltf', (fallbackGltf) => {
+              fallbackGltf.scene.scale.set(0.1, 0.1, 0.1);
+              fallbackGltf.scene.position.set(0, 0, 0.35);
+              fallbackGltf.scene.rotation.set(0, 0, 0);
+              fallbackGltf.scene.traverse((child) => {
+                if (child.isMesh) {
+                  child.frustumCulled = false;
+                  if (child.material) child.material.side = THREE.DoubleSide;
+                }
+              });
+              anchor.group.add(fallbackGltf.scene);
+              arModel = fallbackGltf.scene;
+            });
+          }
+        );
 
         // ── 6. Left-Aligned Floating 3D Glass Menu (Services with Subtitles) ─
         servicesMenu = new THREE.Group();
@@ -1886,7 +2020,7 @@
         anchor.group.add(servicesMenu);
 
         // Expose debug objects for diagnostics
-        window.__AR = { mindarThree, anchor, arRoot, servicesMenu, scene, camera, renderer };
+        window.__AR = { mindarThree, anchor, arRoot, servicesMenu, get arModel() { return arModel; }, scene, camera, renderer };
 
         // Setup Raycasting
         setup3DInteractions(camera, document.getElementById('ar-container'));
@@ -1904,7 +2038,6 @@
             statusPill.classList.add('detected');
             document.getElementById('scan-status-text').textContent = 'CARD DETECTED ✓';
           }
-          document.getElementById('ar-hud-dock').classList.add('visible');
           const helperBar = document.getElementById('scan-helper-bar');
           if (helperBar) helperBar.classList.add('detected');
         };
@@ -1920,7 +2053,6 @@
             statusPill.classList.remove('detected');
             document.getElementById('scan-status-text').textContent = 'SCANNING CARD';
           }
-          document.getElementById('ar-hud-dock').classList.remove('visible');
           const helperBar = document.getElementById('scan-helper-bar');
           if (helperBar) helperBar.classList.remove('detected');
         };
@@ -1950,8 +2082,15 @@
 
             const float = Math.sin(elapsed * 2.0) * 0.015;
             profileMesh.position.z = 0.12 + float;
-            centerLogoMesh.position.z = 0.16 + float * 1.5;
             ringMesh.rotation.z = elapsed * 1.5;
+            saveContactTag.position.z = 0.15 + float * 0.8;
+            btnCall.position.z = 0.14 + float * 0.8;
+
+            // Micro-animation for 3D model hover and subtle showcase rotation
+            if (arModel) {
+              arModel.position.z = 0.35 + float * 1.5;
+              arModel.rotation.y = Math.sin(elapsed * 1.2) * 0.22;
+            }
 
             // Micro-animation for floating glass menu
             if (servicesMenu && servicesMenu.visible) {
@@ -1996,7 +2135,6 @@
         statusPill.classList.add('detected');
         document.getElementById('scan-status-text').textContent = 'HOLOGRAM ACTIVE ✓';
       }
-      document.getElementById('ar-hud-dock').classList.add('visible');
       const helperBar = document.getElementById('scan-helper-bar');
       if (helperBar) helperBar.classList.add('detected');
     }
@@ -2031,7 +2169,6 @@
       }
       document.getElementById('ar-container').classList.remove('active');
       document.getElementById('scan-overlay').classList.remove('active');
-      document.getElementById('ar-hud-dock').classList.remove('visible');
       document.getElementById('start-screen').classList.add('show');
       
       const btn = document.getElementById('btn-start-ar');

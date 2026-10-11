@@ -21,6 +21,9 @@ const MIME = {
   '.json': 'application/json',
   '.mind': 'application/octet-stream',
   '.wasm': 'application/wasm',
+  '.glb': 'model/gltf-binary',
+  '.gltf': 'model/gltf+json',
+  '.bin': 'application/octet-stream',
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
   '.ttf': 'font/ttf'
