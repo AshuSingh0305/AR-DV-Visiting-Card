@@ -1793,7 +1793,17 @@
       btnInsta.position.set(0.17, row2Y, btnZ);
       arRoot.add(btnInsta);
 
-      // ── 5. Left Services Menu & Right Website Video Flanks ──
+      // ── 5. Center DV 3D Hologram Logo Float ──
+      const logoTex = new THREE.TextureLoader().load('dv-logo.png');
+      const centerLogoMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.56, 0.36),
+        new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, side: THREE.DoubleSide })
+      );
+      centerLogoMesh.position.set(0, 0, 0.16);
+      centerLogoMesh.frustumCulled = false;
+      arRoot.add(centerLogoMesh);
+
+      // ── 6. Left Services Menu & Right Website Video Flanks ──
       const servicesMenu = createServicesMenuMesh(THREE);
       const { group: videoDisplayGroup } = createWebsiteVideoMesh(THREE);
 
@@ -1803,6 +1813,7 @@
         videoDisplayGroup,
         profileMesh,
         ringMesh,
+        centerLogoMesh,
         btnTopSave,
         btnText,
         btnWhatsApp,
@@ -2011,6 +2022,7 @@
 
         const float = Math.sin(elapsed * 2.0) * 0.015;
         holo.profileMesh.position.z = 0.12 + float;
+        if (holo.centerLogoMesh) holo.centerLogoMesh.position.z = 0.16 + float * 1.5;
         holo.ringMesh.rotation.z = elapsed * 1.5;
 
         if (standaloneControls) {
@@ -2153,6 +2165,7 @@
 
             const float = Math.sin(elapsed * 2.0) * 0.015;
             holo.profileMesh.position.z = 0.12 + float;
+            if (holo.centerLogoMesh) holo.centerLogoMesh.position.z = 0.16 + float * 1.5;
             holo.ringMesh.rotation.z = elapsed * 1.5;
 
             if (servicesMenu && servicesMenu.visible) {
