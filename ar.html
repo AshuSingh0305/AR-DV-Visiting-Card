@@ -904,7 +904,32 @@
       font-size: 12.5px;
       color: var(--text-dim);
       line-height: 1.5;
+      margin: 0 0 12px;
+    }
+
+    .threat-report-notice {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       margin: 0 0 16px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg, rgba(232, 60, 75, 0.18), rgba(56, 189, 248, 0.12));
+      border: 1px solid rgba(232, 60, 75, 0.45);
+      border-radius: 12px;
+      color: #FFFFFF;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .threat-report-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .threat-report-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #FFFFFF;
+      line-height: 1.4;
     }
 
     .threat-channels-grid {
@@ -1248,17 +1273,23 @@
       </div>
 
       <p class="threat-modal-desc">
-        Protect your digital identity and organizational assets. Connect directly with our cyber threat specialists across verified channels:
+        Protect your digital identity and organizational assets. Connect directly with our cyber threat specialists:
       </p>
+
+      <!-- User Education Footprint Report Banner -->
+      <div class="threat-report-notice">
+        <span class="threat-report-icon">🚨</span>
+        <span class="threat-report-text">Send us your email address to receive your free digital footprint report.</span>
+      </div>
 
       <div class="threat-channels-grid">
         <!-- 1. WhatsApp -->
-        <a href="https://wa.me/917879884975" target="_blank" rel="noopener" class="threat-channel-item channel--wa">
+        <a href="https://wa.me/917879884975?text=Hi%20Data%20Vigilantes,%20here%20is%20my%20email%20address%20for%20the%20free%20digital%20footprint%20report:" target="_blank" rel="noopener" class="threat-channel-item channel--wa">
           <div class="threat-channel-icon">
             <img src="whatsapp.png" class="threat-channel-img" alt="WhatsApp" />
           </div>
           <div class="threat-channel-info">
-            <div class="threat-channel-name">WhatsApp Direct</div>
+            <div class="threat-channel-name">WhatsApp</div>
             <div class="threat-channel-sub">+91 78798 84975</div>
           </div>
           <span class="threat-channel-arrow">→</span>
@@ -1277,12 +1308,12 @@
         </a>
 
         <!-- 3. Email -->
-        <a href="mailto:contact@datavigilantes.com" class="threat-channel-item channel--mail">
+        <a href="mailto:contact@datavigilantes.com?subject=Free%20Digital%20Footprint%20Report&body=Hi%20Data%20Vigilantes,%0A%0APlease%20find%20my%20email%20address%20below%20for%20the%20free%20digital%20footprint%20report:%0A%0A" class="threat-channel-item channel--mail">
           <div class="threat-channel-icon">
             <img src="gmail.png" class="threat-channel-img" alt="Email" />
           </div>
           <div class="threat-channel-info">
-            <div class="threat-channel-name">Email Dispatch</div>
+            <div class="threat-channel-name">Email</div>
             <div class="threat-channel-sub">contact@datavigilantes.com</div>
           </div>
           <span class="threat-channel-arrow">→</span>
@@ -1781,8 +1812,8 @@
       return mesh;
     }
 
-    // 3b. 3D Primary CTA Button Builder: [ 🚨 RUN FREE BREACH SCAN ]
-    function createPrimaryCTAButtonMesh(THREE, label, actionFn, width = 0.88, height = 0.135) {
+    // 3b. 3D Primary CTA Button Builder: Crisp Flat White Alert Icon + High-Contrast Bold Text
+    function createPrimaryCTAButtonMesh(THREE, actionFn, width = 1.10, height = 0.169) {
       const scaleFactor = 2400;
       const canvas = document.createElement('canvas');
       canvas.width = Math.round(width * scaleFactor);
@@ -1793,8 +1824,8 @@
       const ch = canvas.height;
 
       // Solid Red Background (#E83C4B) with matching corner radius
-      const r = 56;
-      const pad = 6;
+      const r = 70;
+      const pad = 8;
       ctx.beginPath();
       if (ctx.roundRect) {
         ctx.roundRect(pad, pad, cw - pad * 2, ch - pad * 2, r);
@@ -1805,17 +1836,74 @@
       ctx.fill();
 
       // High-contrast clean white border stroke
-      ctx.lineWidth = 6;
+      ctx.lineWidth = 7;
       ctx.strokeStyle = '#FFFFFF';
       ctx.stroke();
 
-      // Bold, High-Contrast White Text: [ 🚨 RUN FREE BREACH SCAN ]
-      const font = '900 66px "Outfit", sans-serif';
+      // Text and Icon layout: [ <SirenIcon> RUN FREE BREACH SCAN ]
+      const font = '900 74px "Outfit", sans-serif';
       ctx.font = font;
+
+      const openBracket = '[';
+      const labelText = 'RUN FREE BREACH SCAN ]';
+      const openBracketWidth = ctx.measureText(openBracket).width;
+      const labelWidth = ctx.measureText(labelText).width;
+
+      const iconSize = 92;
+      const gap = 24;
+      const totalWidth = openBracketWidth + gap + iconSize + gap + labelWidth;
+      const startX = Math.round((cw - totalWidth) / 2);
+      const iconCenterY = Math.round(ch / 2);
+
+      // Render '['
       ctx.fillStyle = '#FFFFFF';
-      ctx.textAlign = 'center';
+      ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(label, Math.round(cw / 2), Math.round(ch / 2));
+      ctx.fillText(openBracket, startX, iconCenterY);
+
+      // Render Crisp, Flat White SVG Path of Alert/Siren Icon
+      const iconCenterX = startX + openBracketWidth + gap + Math.round(iconSize / 2);
+      ctx.save();
+      ctx.translate(iconCenterX, iconCenterY);
+      const scale = iconSize / 24;
+      ctx.scale(scale, scale);
+      ctx.translate(-12, -12);
+
+      ctx.fillStyle = '#FFFFFF';
+      // Siren Dome
+      const dome = new Path2D('M6 16V10a6 6 0 0 1 12 0v6H6z');
+      ctx.fill(dome);
+
+      // Siren Pedestal / Base Mount
+      const base = new Path2D('M4 17h16a1.5 1.5 0 0 1 1.5 1.5v.5a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1v-.5A1.5 1.5 0 0 1 4 17z');
+      ctx.fill(base);
+
+      // Slit cutout for flasher reflector (matches #E83C4B background)
+      ctx.fillStyle = '#E83C4B';
+      const slit = new Path2D('M11 10.5h2v3h-2z');
+      ctx.fill(slit);
+
+      // Emergency Flash Beams (Flat pure white)
+      ctx.fillStyle = '#FFFFFF';
+      const topBeam = new Path2D('M11 1.5h2v3h-2z');
+      ctx.fill(topBeam);
+      const leftBeam = new Path2D('M1 10h3v2H1z');
+      ctx.fill(leftBeam);
+      const rightBeam = new Path2D('M20 10h3v2h-3z');
+      ctx.fill(rightBeam);
+      const diagLeft = new Path2D('M3.8 4.2l2.1 2.1 1.4-1.4-2.1-2.1z');
+      ctx.fill(diagLeft);
+      const diagRight = new Path2D('M18.1 6.3l2.1-2.1-1.4-1.4-2.1 2.1z');
+      ctx.fill(diagRight);
+
+      ctx.restore();
+
+      // Render 'RUN FREE BREACH SCAN ]'
+      const labelX = startX + openBracketWidth + gap + iconSize + gap;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(labelText, labelX, iconCenterY);
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.generateMipmaps = false;
@@ -2062,24 +2150,24 @@
       btnTopSave.position.set(0, topPillY, topPillZ);
       arRoot.add(btnTopSave);
 
-      // ── 4. Primary CTA Button: [ 🚨 RUN FREE BREACH SCAN ] ──
-      // Solid red background (#E83C4B), centered horizontally, mathematically even vertical spacing
+      // ── 4. Primary CTA Button: Crisp White Alert Icon + [ RUN FREE BREACH SCAN ] ──
+      // Solid red background (#E83C4B), enlarged by 25% for maximum visual prominence
       const ctaY = -0.47;
       const ctaZ = 0.08;
       const btnPrimaryCTA = createPrimaryCTAButtonMesh(
-        THREE, '[ 🚨 RUN FREE BREACH SCAN ]',
+        THREE,
         () => openThreatScanModal(),
-        0.88, 0.135
+        1.10, 0.169
       );
       btnPrimaryCTA.position.set(0, ctaY, ctaZ);
       arRoot.add(btnPrimaryCTA);
 
       // ── 5. Bottom Action Dock: Mathematically Equal 3D Spacing & Anti-Overlap ──
-      // Positioned directly below the primary CTA at dockY = -0.635 with even 0.030 gap
+      // Positioned comfortably below the enlarged primary CTA at dockY = -0.655
       const bW = 0.235;
       const bH = 0.135;
       const btnZ = 0.08;
-      const dockY = -0.635;
+      const dockY = -0.655;
       const gap = 0.025;
       const step = bW + gap; // 0.26: Centers at -0.52, -0.26, 0.00, +0.26, +0.52
 
@@ -2239,11 +2327,51 @@
     function openThreatScanModal() {
       const modal = document.getElementById('threat-scan-modal');
       if (modal) modal.classList.add('show');
+
+      // User Education Feedback (Prompt Requirement 2): Update top HTML UI bar to high-contrast message
+      const scanStatus = document.getElementById('scan-status');
+      if (scanStatus) {
+        scanStatus.textContent = "Send us your email address to receive your free digital footprint report.";
+        scanStatus.style.color = '#FFFFFF';
+        scanStatus.style.fontWeight = '700';
+      }
+      const scanStatusText = document.getElementById('scan-status-text');
+      if (scanStatusText) {
+        scanStatusText.textContent = "Send us your email address to receive your free digital footprint report.";
+        scanStatusText.style.color = '#FFFFFF';
+        scanStatusText.style.fontWeight = '700';
+      }
+      const statusPill = document.getElementById('scan-status-pill');
+      if (statusPill) {
+        statusPill.classList.add('detected');
+        statusPill.style.borderColor = 'rgba(232, 60, 75, 0.9)';
+        statusPill.style.background = 'rgba(232, 60, 75, 0.25)';
+        statusPill.style.boxShadow = '0 0 16px rgba(232, 60, 75, 0.45)';
+      }
     }
 
     function closeThreatScanModal() {
       const modal = document.getElementById('threat-scan-modal');
       if (modal) modal.classList.remove('show');
+
+      const scanStatus = document.getElementById('scan-status');
+      if (scanStatus && cardDetected) {
+        scanStatus.textContent = 'TARGET LOCKED // CARD ACTIVE';
+        scanStatus.style.color = '#34d399';
+        scanStatus.style.fontWeight = '600';
+      }
+      const scanStatusText = document.getElementById('scan-status-text');
+      if (scanStatusText && cardDetected) {
+        scanStatusText.textContent = 'TARGET LOCKED // CARD ACTIVE';
+        scanStatusText.style.color = '#34d399';
+        scanStatusText.style.fontWeight = '600';
+      }
+      const statusPill = document.getElementById('scan-status-pill');
+      if (statusPill && cardDetected) {
+        statusPill.style.borderColor = 'rgba(52, 211, 153, 0.4)';
+        statusPill.style.background = 'rgba(6, 22, 45, 0.85)';
+        statusPill.style.boxShadow = 'none';
+      }
     }
 
     function handleThreatModalBackdrop(e) {
