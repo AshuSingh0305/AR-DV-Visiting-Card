@@ -44,12 +44,12 @@ const server = http.createServer((req, res) => {
   const parsedUrl = new URL(req.url, `http://localhost:${PORT}`);
   let pathname = decodeURIComponent(parsedUrl.pathname);
 
-  // Default root to ar.html (the AR visiting card experience)
-  if (pathname === '/' || pathname === '') {
-    pathname = '/ar.html';
+  // Clean route handling: root, /ar, /ar/, or legacy /ar.html -> /ar/index.html
+  if (pathname === '/' || pathname === '' || pathname === '/ar' || pathname === '/ar/' || pathname === '/ar.html') {
+    pathname = '/ar/index.html';
   }
 
-  const safePath = path.normalize(path.join(__dirname, pathname));
+  let safePath = path.normalize(path.join(__dirname, pathname));
 
   // Directory traversal protection
   if (!safePath.startsWith(__dirname)) {
@@ -59,7 +59,15 @@ const server = http.createServer((req, res) => {
   }
 
   fs.stat(safePath, (err, stats) => {
-    if (err || !stats.isFile()) {
+    if (!err && stats.isDirectory()) {
+      safePath = path.join(safePath, 'index.html');
+      return fs.stat(safePath, handleServeFile);
+    }
+    handleServeFile(err, stats);
+  });
+
+  function handleServeFile(err, stats) {
+    if (err || !stats || !stats.isFile()) {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end(`404 Not Found: ${pathname}`);
       return;
@@ -95,7 +103,7 @@ const server = http.createServer((req, res) => {
       const stream = fs.createReadStream(safePath);
       stream.pipe(res);
     }
-  });
+  }
 });
 
 function getLocalIpAddresses() {
@@ -117,7 +125,7 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log('  Data Vigilantes — Local Card Server Running');
   console.log('='.repeat(55));
   console.log(`  Local URL:        http://localhost:${PORT}/`);
-  console.log(`  AR Card Page:     http://localhost:${PORT}/ar.html`);
+  console.log(`  AR Card (Clean):  http://localhost:${PORT}/ar`);
   console.log(`  Web 3D Card:      http://localhost:${PORT}/index.html`);
   console.log(`  Card Target Page: http://localhost:${PORT}/card-front.html`);
   if (localIps.length > 0) {

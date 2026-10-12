@@ -1,9 +1,10 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/", "destination": "/ar.html" },
-    { "source": "/siddharth", "destination": "/ar.html?user=siddharth" },
-    { "source": "/vrishti", "destination": "/ar.html?user=vrishti" },
-    { "source": "/mayuri", "destination": "/ar.html?user=mayuri" }
+    { "source": "/", "destination": "/ar" },
+    { "source": "/ar", "destination": "/ar/index.html" },
+    { "source": "/siddharth", "destination": "/ar?user=siddharth" },
+    { "source": "/vrishti", "destination": "/ar?user=vrishti" },
+    { "source": "/mayuri", "destination": "/ar?user=mayuri" }
   ]
 }

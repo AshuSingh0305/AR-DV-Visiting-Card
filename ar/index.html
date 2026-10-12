@@ -1172,7 +1172,7 @@
   <!-- ─── Loading Screen ─── -->
   <div id="loading-screen">
     <div class="loading-logo-wrap">
-      <img src="dv-logo.png" style="width:120px;height:auto;filter:drop-shadow(0 4px 12px rgba(56,189,248,0.3));" alt="Data Vigilantes" />
+      <img src="../dv-logo.png" style="width:120px;height:auto;filter:drop-shadow(0 4px 12px rgba(56,189,248,0.3));" alt="Data Vigilantes" />
     </div>
     <div class="loading-title">Data Vigilantes</div>
     <div class="progress-wrap">
@@ -1194,7 +1194,7 @@
 
     <!-- Active User Preview Card -->
     <div class="team-badge-preview">
-      <img id="start-avatar" class="badge-avatar" src="siddharth.jpg" alt="Team Member" />
+      <img id="start-avatar" class="badge-avatar" src="../siddharth.jpg" alt="Team Member" />
       <div class="badge-info">
         <div id="start-name" class="badge-name">Siddharth Chandra</div>
         <div id="start-role" class="badge-role">Founder & CEO</div>
@@ -1204,7 +1204,7 @@
     <div class="start-title">AR Business Card</div>
 
     <div class="card-illus">
-      <img src="dv-logo-square.png" class="card-illus-logo" alt="Data Vigilantes Logo" />
+      <img src="../dv-logo-square.png" class="card-illus-logo" alt="Data Vigilantes Logo" />
       <div class="card-illus-txt">DATA VIGILANTES</div>
     </div>
 
@@ -1231,7 +1231,7 @@
   <div id="scan-overlay">
     <div class="ar-top-hud">
       <div class="hud-brand">
-        <img src="dv-logo-square.png" class="hud-brand-logo" alt="DV" />
+        <img src="../dv-logo-square.png" class="hud-brand-logo" alt="DV" />
         <span class="hud-brand-txt">DATA VIGILANTES AR</span>
       </div>
       <button id="btn-close-ar" onclick="stopAR()">✕</button>
@@ -1286,7 +1286,7 @@
         <!-- 1. WhatsApp -->
         <a href="https://wa.me/917879884975?text=Hi%20Data%20Vigilantes,%20here%20is%20my%20email%20address%20for%20the%20free%20digital%20footprint%20report:" target="_blank" rel="noopener" class="threat-channel-item channel--wa">
           <div class="threat-channel-icon">
-            <img src="whatsapp.png" class="threat-channel-img" alt="WhatsApp" />
+            <img src="../whatsapp.png" class="threat-channel-img" alt="WhatsApp" />
           </div>
           <div class="threat-channel-info">
             <div class="threat-channel-name">WhatsApp</div>
@@ -1298,7 +1298,7 @@
         <!-- 2. Instagram -->
         <a href="https://www.instagram.com/datavigilantes" target="_blank" rel="noopener" class="threat-channel-item channel--ig">
           <div class="threat-channel-icon">
-            <img src="instagram.png" class="threat-channel-img" alt="Instagram" />
+            <img src="../instagram.png" class="threat-channel-img" alt="Instagram" />
           </div>
           <div class="threat-channel-info">
             <div class="threat-channel-name">Instagram</div>
@@ -1310,7 +1310,7 @@
         <!-- 3. Email -->
         <a href="mailto:contact@datavigilantes.com?subject=Free%20Digital%20Footprint%20Report&body=Hi%20Data%20Vigilantes,%0A%0APlease%20find%20my%20email%20address%20below%20for%20the%20free%20digital%20footprint%20report:%0A%0A" class="threat-channel-item channel--mail">
           <div class="threat-channel-icon">
-            <img src="gmail.png" class="threat-channel-img" alt="Email" />
+            <img src="../gmail.png" class="threat-channel-img" alt="Email" />
           </div>
           <div class="threat-channel-info">
             <div class="threat-channel-name">Email</div>
@@ -1350,7 +1350,7 @@
         linkedin: "https://www.linkedin.com/company/datavigilantes",
         insta: "@datavigilantes",
         instaLink: "https://www.instagram.com/datavigilantes",
-        photo: "siddharth.jpg"
+        photo: "../siddharth.jpg"
       },
       vrishti: {
         name: "Vrishti",
@@ -1360,7 +1360,7 @@
         linkedin: "https://www.linkedin.com/company/datavigilantes",
         insta: "@datavigilantes",
         instaLink: "https://www.instagram.com/datavigilantes",
-        photo: "Vrishti.jpeg"
+        photo: "../Vrishti.jpeg"
       },
       mayuri: {
         name: "Mayuri",
@@ -1370,7 +1370,7 @@
         linkedin: "https://www.linkedin.com/company/datavigilantes",
         insta: "@datavigilantes",
         instaLink: "https://www.instagram.com/datavigilantes",
-        photo: "Mayuri.jpeg"
+        photo: "../Mayuri.jpeg"
       }
     };
 
@@ -1452,7 +1452,8 @@
       const texture = new THREE.CanvasTexture(canvas);
 
       function redraw() {
-        if (!avatarImg.src.endsWith(activeUser.photo)) {
+        const photoFilename = activeUser.photo.split('/').pop();
+        if (!avatarImg.src.endsWith(photoFilename)) {
           avatarImg.src = activeUser.photo;
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1573,7 +1574,7 @@
     function createWebsiteVideoMesh(THREE) {
       if (!websiteVideo) {
         websiteVideo = document.createElement('video');
-        websiteVideo.src = 'DV-website%20screen%20recording.mp4';
+        websiteVideo.src = '../DV-website%20screen%20recording.mp4';
         websiteVideo.crossOrigin = 'anonymous';
         websiteVideo.loop = true;
         websiteVideo.muted = true;
@@ -1655,11 +1656,11 @@
       gmail: new Image(),
       email: new Image()
     };
-    officialIcons.whatsapp.src = 'whatsapp.png';
-    officialIcons.instagram.src = 'instagram.png';
-    officialIcons.insta.src = 'instagram.png';
-    officialIcons.gmail.src = 'gmail.png';
-    officialIcons.email.src = 'gmail.png';
+    officialIcons.whatsapp.src = '../whatsapp.png';
+    officialIcons.instagram.src = '../instagram.png';
+    officialIcons.insta.src = '../instagram.png';
+    officialIcons.gmail.src = '../gmail.png';
+    officialIcons.email.src = '../gmail.png';
 
     // 3. 3D Action Button Texture Builder with Official Icons & Crisp Vectors
     function createActionButtonMesh(THREE, label, iconType, bgColor, borderColor, actionFn, width = 0.235, height = 0.135) {
@@ -2223,7 +2224,7 @@
       arRoot.add(btnInsta);
 
       // ── 6. Center DV 3D Hologram Logo Float ──
-      const logoTex = new THREE.TextureLoader().load('dv-logo.png');
+      const logoTex = new THREE.TextureLoader().load('../dv-logo.png');
       const centerLogoMesh = new THREE.Mesh(
         new THREE.PlaneGeometry(0.56, 0.36),
         new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, side: THREE.DoubleSide })
@@ -2631,7 +2632,7 @@
       try {
         mindarThree = new window.MINDAR.IMAGE.MindARThree({
           container: document.getElementById('ar-container'),
-          imageTargetSrc: 'targets.mind',
+          imageTargetSrc: '../targets.mind',
           maxTrack: 1,
           uiLoading: 'no',
           uiScanning: 'no',
