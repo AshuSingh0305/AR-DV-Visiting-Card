@@ -1663,7 +1663,7 @@
     officialIcons.email.src = '../gmail.png';
 
     // 3. 3D Action Button Texture Builder with Official Icons & Crisp Vectors
-    function createActionButtonMesh(THREE, label, iconType, bgColor, borderColor, actionFn, width = 0.235, height = 0.135) {
+    function createActionButtonMesh(THREE, label, iconType, bgColor, borderColor, actionFn, width = 0.225, height = 0.125) {
       const scaleFactor = 2400;
       const canvas = document.createElement('canvas');
       canvas.width = Math.round(width * scaleFactor);
@@ -1672,9 +1672,10 @@
 
       const cw = canvas.width;
       const ch = canvas.height;
-      const font = '800 70px "Outfit", sans-serif';
-      const iconSize = 88;
-      const iconGap = 20;
+      const font = '800 68px "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      // Comfortably fill the left side of the button (54% of button height)
+      const iconSize = Math.round(ch * 0.54);
+      const iconGap = 22;
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.generateMipmaps = false;
@@ -1685,7 +1686,7 @@
         ctx.clearRect(0, 0, cw, ch);
 
         // Consistent Corner Border-Radius & Border Stroke across all buttons
-        const r = 56;
+        const r = Math.round(ch * 0.38);
         const pad = 6;
         ctx.beginPath();
         if (ctx.roundRect) {
@@ -1709,17 +1710,20 @@
         const textX = startX + iconSize + iconGap;
 
         // Render Icons: Use official image files (whatsapp.png, instagram.png, gmail.png)
+        // Scaled up to comfortably fill the left side and perfectly center-aligned with text
         if (iconType === 'whatsapp' || iconType === 'instagram' || iconType === 'insta' || iconType === 'gmail' || iconType === 'email') {
           const img = officialIcons[iconType];
           if (img && img.complete && img.naturalWidth > 0) {
-            const drawSize = Math.round(iconSize * 0.96);
-            ctx.drawImage(img, Math.round(iconCenterX - drawSize / 2), Math.round(iconCenterY - drawSize / 2), drawSize, drawSize);
+            const drawSize = iconSize;
+            const drawX = Math.round(iconCenterX - drawSize / 2);
+            const drawY = Math.round(iconCenterY - drawSize / 2);
+            ctx.drawImage(img, drawX, drawY, drawSize, drawSize);
           }
         } else if (iconType === 'save') {
           // High-Resolution Floppy Disk Vector
           ctx.save();
           ctx.translate(iconCenterX, iconCenterY);
-          const scale = (iconSize * 0.88) / 24;
+          const scale = iconSize / 24;
           ctx.scale(scale, scale);
           ctx.translate(-12, -12);
 
@@ -1743,7 +1747,7 @@
           // High-Resolution Crisp SMS Speech Bubble with 3 Dots
           ctx.save();
           ctx.translate(iconCenterX, iconCenterY);
-          const scale = (iconSize * 0.88) / 24;
+          const scale = iconSize / 24;
           ctx.scale(scale, scale);
           ctx.translate(-12, -12);
 
@@ -1763,10 +1767,10 @@
           ctx.save();
           ctx.translate(iconCenterX, iconCenterY);
 
-          const badgeSize = Math.round(iconSize * 0.88);
+          const badgeSize = iconSize;
           ctx.beginPath();
           if (ctx.roundRect) {
-            ctx.roundRect(-badgeSize / 2, -badgeSize / 2, badgeSize, badgeSize, 7);
+            ctx.roundRect(-badgeSize / 2, -badgeSize / 2, badgeSize, badgeSize, 12);
           } else {
             ctx.rect(-badgeSize / 2, -badgeSize / 2, badgeSize, badgeSize);
           }
@@ -1774,7 +1778,7 @@
           ctx.fill();
 
           ctx.fillStyle = '#FFFFFF';
-          ctx.font = `bold ${Math.round(badgeSize * 0.62)}px sans-serif`;
+          ctx.font = `bold ${Math.round(badgeSize * 0.60)}px sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText('in', 0, 0);
@@ -1799,6 +1803,10 @@
 
       renderButton();
 
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(renderButton);
+      }
+
       const geometry = new THREE.PlaneGeometry(width, height);
       const material = new THREE.MeshBasicMaterial({
         map: texture,
@@ -1814,102 +1822,115 @@
     }
 
     // 3b. 3D Primary CTA Button Builder: Crisp Flat White Alert Icon + High-Contrast Bold Text
-    function createPrimaryCTAButtonMesh(THREE, actionFn, width = 1.10, height = 0.169) {
-      const scaleFactor = 2400;
+    function createPrimaryCTAButtonMesh(THREE, actionFn, width = 0.94, height = 0.160) {
+      // Exact 1:1 Aspect Ratio Synchronization between Geometry and Canvas
+      const aspect = width / height;
+      const ch = 400; // Crisp native vertical resolution
+      const cw = Math.round(ch * aspect); // Matched horizontal resolution (zero squishing)
+
       const canvas = document.createElement('canvas');
-      canvas.width = Math.round(width * scaleFactor);
-      canvas.height = Math.round(height * scaleFactor);
+      canvas.width = cw;
+      canvas.height = ch;
       const ctx = canvas.getContext('2d');
-
-      const cw = canvas.width;
-      const ch = canvas.height;
-
-      // Solid Red Background (#E83C4B) with matching corner radius
-      const r = 70;
-      const pad = 8;
-      ctx.beginPath();
-      if (ctx.roundRect) {
-        ctx.roundRect(pad, pad, cw - pad * 2, ch - pad * 2, r);
-      } else {
-        ctx.rect(pad, pad, cw - pad * 2, ch - pad * 2);
-      }
-      ctx.fillStyle = '#E83C4B';
-      ctx.fill();
-
-      // High-contrast clean white border stroke
-      ctx.lineWidth = 7;
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.stroke();
-
-      // Text and Icon layout: [ <SirenIcon> RUN FREE BREACH SCAN ]
-      const font = '900 74px "Outfit", sans-serif';
-      ctx.font = font;
-
-      const openBracket = '[';
-      const labelText = 'RUN FREE BREACH SCAN ]';
-      const openBracketWidth = ctx.measureText(openBracket).width;
-      const labelWidth = ctx.measureText(labelText).width;
-
-      const iconSize = 92;
-      const gap = 24;
-      const totalWidth = openBracketWidth + gap + iconSize + gap + labelWidth;
-      const startX = Math.round((cw - totalWidth) / 2);
-      const iconCenterY = Math.round(ch / 2);
-
-      // Render '['
-      ctx.fillStyle = '#FFFFFF';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(openBracket, startX, iconCenterY);
-
-      // Render Crisp, Flat White SVG Path of Alert/Siren Icon
-      const iconCenterX = startX + openBracketWidth + gap + Math.round(iconSize / 2);
-      ctx.save();
-      ctx.translate(iconCenterX, iconCenterY);
-      const scale = iconSize / 24;
-      ctx.scale(scale, scale);
-      ctx.translate(-12, -12);
-
-      ctx.fillStyle = '#FFFFFF';
-      // Siren Dome
-      const dome = new Path2D('M6 16V10a6 6 0 0 1 12 0v6H6z');
-      ctx.fill(dome);
-
-      // Siren Pedestal / Base Mount
-      const base = new Path2D('M4 17h16a1.5 1.5 0 0 1 1.5 1.5v.5a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1v-.5A1.5 1.5 0 0 1 4 17z');
-      ctx.fill(base);
-
-      // Slit cutout for flasher reflector (matches #E83C4B background)
-      ctx.fillStyle = '#E83C4B';
-      const slit = new Path2D('M11 10.5h2v3h-2z');
-      ctx.fill(slit);
-
-      // Emergency Flash Beams (Flat pure white)
-      ctx.fillStyle = '#FFFFFF';
-      const topBeam = new Path2D('M11 1.5h2v3h-2z');
-      ctx.fill(topBeam);
-      const leftBeam = new Path2D('M1 10h3v2H1z');
-      ctx.fill(leftBeam);
-      const rightBeam = new Path2D('M20 10h3v2h-3z');
-      ctx.fill(rightBeam);
-      const diagLeft = new Path2D('M3.8 4.2l2.1 2.1 1.4-1.4-2.1-2.1z');
-      ctx.fill(diagLeft);
-      const diagRight = new Path2D('M18.1 6.3l2.1-2.1-1.4-1.4-2.1 2.1z');
-      ctx.fill(diagRight);
-
-      ctx.restore();
-
-      // Render 'RUN FREE BREACH SCAN ]'
-      const labelX = startX + openBracketWidth + gap + iconSize + gap;
-      ctx.fillStyle = '#FFFFFF';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(labelText, labelX, iconCenterY);
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.generateMipmaps = false;
       texture.minFilter = THREE.LinearFilter;
       texture.magFilter = THREE.LinearFilter;
+
+      function renderCTA() {
+        ctx.clearRect(0, 0, cw, ch);
+
+        // Solid Red Background (#E83C4B) with matching corner radius
+        const r = Math.round(ch * 0.36);
+        const pad = 8;
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(pad, pad, cw - pad * 2, ch - pad * 2, r);
+        } else {
+          ctx.rect(pad, pad, cw - pad * 2, ch - pad * 2);
+        }
+        ctx.fillStyle = '#E83C4B';
+        ctx.fill();
+
+        // High-contrast clean white border stroke
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.stroke();
+
+        // Native undistorted font rendering with adequate left/right padding
+        const font = '900 86px "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.font = font;
+
+        const openBracket = '[';
+        const labelText = 'RUN FREE BREACH SCAN ]';
+        const openBracketWidth = ctx.measureText(openBracket).width;
+        const labelWidth = ctx.measureText(labelText).width;
+
+        const iconSize = 130;
+        const gap = 26;
+        const totalContentWidth = openBracketWidth + gap + iconSize + gap + labelWidth;
+        const startX = Math.round((cw - totalContentWidth) / 2);
+        const iconCenterY = Math.round(ch / 2);
+
+        // Render '['
+        ctx.fillStyle = '#FFFFFF';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(openBracket, startX, iconCenterY);
+
+        // Render Crisp, Flat White SVG Path of Alert/Siren Icon
+        const iconCenterX = startX + openBracketWidth + gap + Math.round(iconSize / 2);
+        ctx.save();
+        ctx.translate(iconCenterX, iconCenterY);
+        const scale = iconSize / 24;
+        ctx.scale(scale, scale);
+        ctx.translate(-12, -12);
+
+        ctx.fillStyle = '#FFFFFF';
+        // Siren Dome
+        const dome = new Path2D('M6 16V10a6 6 0 0 1 12 0v6H6z');
+        ctx.fill(dome);
+
+        // Siren Pedestal / Base Mount
+        const base = new Path2D('M4 17h16a1.5 1.5 0 0 1 1.5 1.5v.5a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1v-.5A1.5 1.5 0 0 1 4 17z');
+        ctx.fill(base);
+
+        // Slit cutout for flasher reflector (matches #E83C4B background)
+        ctx.fillStyle = '#E83C4B';
+        const slit = new Path2D('M11 10.5h2v3h-2z');
+        ctx.fill(slit);
+
+        // Emergency Flash Beams (Flat pure white)
+        ctx.fillStyle = '#FFFFFF';
+        const topBeam = new Path2D('M11 1.5h2v3h-2z');
+        ctx.fill(topBeam);
+        const leftBeam = new Path2D('M1 10h3v2H1z');
+        ctx.fill(leftBeam);
+        const rightBeam = new Path2D('M20 10h3v2h-3z');
+        ctx.fill(rightBeam);
+        const diagLeft = new Path2D('M3.8 4.2l2.1 2.1 1.4-1.4-2.1-2.1z');
+        ctx.fill(diagLeft);
+        const diagRight = new Path2D('M18.1 6.3l2.1-2.1-1.4-1.4-2.1 2.1z');
+        ctx.fill(diagRight);
+
+        ctx.restore();
+
+        // Render 'RUN FREE BREACH SCAN ]'
+        const labelX = startX + openBracketWidth + gap + iconSize + gap;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(labelText, labelX, iconCenterY);
+
+        texture.needsUpdate = true;
+      }
+
+      renderCTA();
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(renderCTA);
+      }
 
       const geometry = new THREE.PlaneGeometry(width, height);
       const material = new THREE.MeshBasicMaterial({
@@ -2096,7 +2117,9 @@
       arRoot.visible = true;
 
       // ── 1. Central Card Base Hologram Frame ──
-      const frameGeo = new THREE.PlaneGeometry(1.04, 0.75);
+      // ── 1. Central Card Base Hologram Frame ──
+      // Scaled down by ~8% to 0.96 x 0.68 to prevent crowding and side panel bleeding
+      const frameGeo = new THREE.PlaneGeometry(0.96, 0.68);
       const frameEdges = new THREE.EdgesGeometry(frameGeo);
       const frameLine = new THREE.LineSegments(
         frameEdges,
@@ -2109,18 +2132,18 @@
       // ── 2. Top Profile Plaque (Avatar, Name, Role) ──
       const { texture: profileTex } = createProfileBannerTexture(THREE);
       const profileMesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(0.96, 0.34),
+        new THREE.PlaneGeometry(0.88, 0.31),
         new THREE.MeshBasicMaterial({ map: profileTex, transparent: true, side: THREE.DoubleSide })
       );
-      profileMesh.position.set(0, 0.54, 0.12);
+      profileMesh.position.set(0, 0.50, 0.12);
       profileMesh.rotation.x = 0.12;
       profileMesh.frustumCulled = false;
       arRoot.add(profileMesh);
 
       // Holographic vertical stem connecting card to profile
       const stemGeo = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(0, 0.36, 0.02),
-        new THREE.Vector3(0, 0.42, 0.10)
+        new THREE.Vector3(0, 0.34, 0.02),
+        new THREE.Vector3(0, 0.38, 0.10)
       ]);
       const stemLine = new THREE.Line(
         stemGeo,
@@ -2130,59 +2153,48 @@
       arRoot.add(stemLine);
 
       // Glowing cyan rings floating around avatar
-      const ringGeo = new THREE.TorusGeometry(0.12, 0.006, 8, 48);
+      const ringGeo = new THREE.TorusGeometry(0.11, 0.005, 8, 48);
       const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.8 });
       const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-      ringMesh.position.set(-0.31, 0.54, 0.13);
+      ringMesh.position.set(-0.28, 0.50, 0.13);
       ringMesh.frustumCulled = false;
       arRoot.add(ringMesh);
 
       // ── 3. Top Pill Header: Single Centered [ Save Contact ] ──
-      // Centered directly above profile name and avatar, perfectly symmetrical with the main card
-      const topPillY = 0.77;
+      const topPillY = 0.73;
       const topPillZ = 0.14;
 
       const btnTopSave = createActionButtonMesh(
         THREE, 'Save Contact', 'save',
         'rgba(6, 22, 45, 0.95)', '#38bdf8',
         () => saveContact(),
-        0.62, 0.145
+        0.58, 0.135
       );
       btnTopSave.position.set(0, topPillY, topPillZ);
       arRoot.add(btnTopSave);
 
       // ── 4. Primary CTA Button: Crisp White Alert Icon + [ RUN FREE BREACH SCAN ] ──
-      // Solid red background (#E83C4B), enlarged by 25% for maximum visual prominence
-      const ctaY = -0.47;
+      // Positioned at ctaY = -0.480, completely clear of Card Frame (bottom: -0.340) with 0.060 gap
+      const ctaY = -0.480;
       const ctaZ = 0.08;
       const btnPrimaryCTA = createPrimaryCTAButtonMesh(
         THREE,
         () => openThreatScanModal(),
-        1.10, 0.169
+        0.94, 0.160
       );
       btnPrimaryCTA.position.set(0, ctaY, ctaZ);
       arRoot.add(btnPrimaryCTA);
 
-      // ── 5. Bottom Action Dock: Mathematically Equal 3D Spacing & Anti-Overlap ──
-      // Positioned comfortably below the enlarged primary CTA at dockY = -0.655
-      const bW = 0.235;
-      const bH = 0.135;
+      // ── 5. Bottom Social Button Row: (WhatsApp, Email, LinkedIn, Insta) ──
+      // Pushed further down to dockY = -0.680 to create a distinct, mathematically even gap (0.058 gap from CTA)
+      const bW = 0.225;
+      const bH = 0.125;
       const btnZ = 0.08;
-      const dockY = -0.655;
-      const gap = 0.025;
-      const step = bW + gap; // 0.26: Centers at -0.52, -0.26, 0.00, +0.26, +0.52
+      const dockY = -0.680;
+      const gap = 0.022;
+      const step = bW + gap; // 0.247: Centers 4 buttons at -0.3705, -0.1235, +0.1235, +0.3705
 
-      // 1. Text (SMS)
-      const btnText = createActionButtonMesh(
-        THREE, 'Text', 'text',
-        'rgba(6, 40, 32, 0.95)', '#10b981',
-        () => window.location.href = `sms:${(activeUser.phone || '').replace(/\s+/g, '')}`,
-        bW, bH
-      );
-      btnText.position.set(-2 * step, dockY, btnZ);
-      arRoot.add(btnText);
-
-      // 2. WhatsApp
+      // 1. WhatsApp
       const cleanWaPhone = (activeUser.phone || '').replace(/[^0-9]/g, '');
       const btnWhatsApp = createActionButtonMesh(
         THREE, 'WhatsApp', 'whatsapp',
@@ -2190,43 +2202,43 @@
         () => window.open(`https://wa.me/${cleanWaPhone}`, '_blank'),
         bW, bH
       );
-      btnWhatsApp.position.set(-1 * step, dockY, btnZ);
+      btnWhatsApp.position.set(-1.5 * step, dockY, btnZ);
       arRoot.add(btnWhatsApp);
 
-      // 3. Gmail
+      // 2. Email (Gmail)
       const btnGmail = createActionButtonMesh(
-        THREE, 'Gmail', 'gmail',
+        THREE, 'Email', 'gmail',
         'rgba(45, 14, 14, 0.95)', '#ea4335',
         () => window.location.href = `mailto:${activeUser.email}`,
         bW, bH
       );
-      btnGmail.position.set(0.00, dockY, btnZ);
+      btnGmail.position.set(-0.5 * step, dockY, btnZ);
       arRoot.add(btnGmail);
 
-      // 4. LinkedIn
+      // 3. LinkedIn
       const btnLinkedin = createActionButtonMesh(
         THREE, 'LinkedIn', 'linkedin',
         'rgba(8, 24, 60, 0.95)', '#0a66c2',
         () => window.open(activeUser.linkedin, '_blank'),
         bW, bH
       );
-      btnLinkedin.position.set(1 * step, dockY, btnZ);
+      btnLinkedin.position.set(0.5 * step, dockY, btnZ);
       arRoot.add(btnLinkedin);
 
-      // 5. Instagram
+      // 4. Instagram
       const btnInsta = createActionButtonMesh(
         THREE, 'Insta', 'insta',
         'rgba(45, 12, 36, 0.95)', '#e1306c',
         () => window.open(activeUser.instaLink, '_blank'),
         bW, bH
       );
-      btnInsta.position.set(2 * step, dockY, btnZ);
+      btnInsta.position.set(1.5 * step, dockY, btnZ);
       arRoot.add(btnInsta);
 
       // ── 6. Center DV 3D Hologram Logo Float ──
       const logoTex = new THREE.TextureLoader().load('../dv-logo.png');
       const centerLogoMesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(0.56, 0.36),
+        new THREE.PlaneGeometry(0.50, 0.32),
         new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, side: THREE.DoubleSide })
       );
       centerLogoMesh.position.set(0, 0, 0.16);
@@ -2246,7 +2258,7 @@
         centerLogoMesh,
         btnTopSave,
         btnPrimaryCTA,
-        btnText,
+        btnText: null,
         btnWhatsApp,
         btnGmail,
         btnLinkedin,
