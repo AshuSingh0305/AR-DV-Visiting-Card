@@ -908,25 +908,18 @@
     }
 
     .threat-channels-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      display: flex;
+      flex-direction: column;
       gap: 10px;
       margin-bottom: 16px;
-    }
-
-    @media (max-width: 420px) {
-      .threat-channels-grid {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
     }
 
     .threat-channel-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
       color: #fff;
@@ -945,13 +938,20 @@
     }
 
     .threat-channel-icon {
-      font-size: 18px;
-      line-height: 1;
-      width: 24px;
+      width: 28px;
+      height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+    }
+
+    .threat-channel-img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: 6px;
+      display: block;
     }
 
     .threat-channel-info {
@@ -960,7 +960,7 @@
     }
 
     .threat-channel-name {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       color: #fff;
       white-space: nowrap;
@@ -969,31 +969,29 @@
     }
 
     .threat-channel-sub {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--text-dim);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-top: 2px;
     }
 
     .threat-channel-arrow {
-      font-size: 12px;
+      font-size: 14px;
       color: var(--cyan);
       opacity: 0.7;
       transition: transform 0.2s ease;
     }
 
     .threat-channel-item:hover .threat-channel-arrow {
-      transform: translateX(3px);
+      transform: translateX(4px);
       opacity: 1;
     }
 
-    .channel--wa:hover { border-color: #25D366; background: rgba(37, 211, 102, 0.1); }
-    .channel--mail:hover { border-color: #EA4335; background: rgba(234, 67, 53, 0.1); }
-    .channel--li:hover { border-color: #0A66C2; background: rgba(10, 102, 194, 0.1); }
-    .channel--ig:hover { border-color: #E1306C; background: rgba(225, 48, 108, 0.1); }
-    .channel--x:hover { border-color: #ffffff; background: rgba(255, 255, 255, 0.1); }
-    .channel--fb:hover { border-color: #1877F2; background: rgba(24, 119, 242, 0.1); }
+    .channel--wa:hover { border-color: #25D366; background: rgba(37, 211, 102, 0.12); }
+    .channel--ig:hover { border-color: #E1306C; background: rgba(225, 48, 108, 0.12); }
+    .channel--mail:hover { border-color: #EA4335; background: rgba(234, 67, 53, 0.12); }
 
     .threat-primary-btn {
       display: flex;
@@ -1238,10 +1236,7 @@
 
   </div>
 
-  <!-- ─── Audio: Target Locked Feedback ─── -->
-  <audio id="ar-lock-sound" preload="auto" src="lock-sound.mp3"></audio>
-
-  <!-- ─── Unified Threat Scan & Contact Channels Modal ─── -->
+  <!-- ─── Unified Threat Scan & Contact Channels Modal (Only WhatsApp, Instagram, Email) ─── -->
   <div id="threat-scan-modal" class="threat-modal" onclick="handleThreatModalBackdrop(event)">
     <div class="threat-modal-card">
       <div class="threat-modal-header">
@@ -1259,7 +1254,9 @@
       <div class="threat-channels-grid">
         <!-- 1. WhatsApp -->
         <a href="https://wa.me/917879884975" target="_blank" rel="noopener" class="threat-channel-item channel--wa">
-          <div class="threat-channel-icon">💬</div>
+          <div class="threat-channel-icon">
+            <img src="whatsapp.png" class="threat-channel-img" alt="WhatsApp" />
+          </div>
           <div class="threat-channel-info">
             <div class="threat-channel-name">WhatsApp Direct</div>
             <div class="threat-channel-sub">+91 78798 84975</div>
@@ -1267,29 +1264,11 @@
           <span class="threat-channel-arrow">→</span>
         </a>
 
-        <!-- 2. Email -->
-        <a href="mailto:contact@datavigilantes.com" class="threat-channel-item channel--mail">
-          <div class="threat-channel-icon">✉️</div>
-          <div class="threat-channel-info">
-            <div class="threat-channel-name">Email Dispatch</div>
-            <div class="threat-channel-sub">contact@datavigilantes.com</div>
-          </div>
-          <span class="threat-channel-arrow">→</span>
-        </a>
-
-        <!-- 3. LinkedIn -->
-        <a href="https://www.linkedin.com/company/data-vigilantes/" target="_blank" rel="noopener" class="threat-channel-item channel--li">
-          <div class="threat-channel-icon">💼</div>
-          <div class="threat-channel-info">
-            <div class="threat-channel-name">LinkedIn</div>
-            <div class="threat-channel-sub">Data Vigilantes</div>
-          </div>
-          <span class="threat-channel-arrow">→</span>
-        </a>
-
-        <!-- 4. Instagram -->
+        <!-- 2. Instagram -->
         <a href="https://www.instagram.com/datavigilantes" target="_blank" rel="noopener" class="threat-channel-item channel--ig">
-          <div class="threat-channel-icon">📸</div>
+          <div class="threat-channel-icon">
+            <img src="instagram.png" class="threat-channel-img" alt="Instagram" />
+          </div>
           <div class="threat-channel-info">
             <div class="threat-channel-name">Instagram</div>
             <div class="threat-channel-sub">@datavigilantes</div>
@@ -1297,22 +1276,14 @@
           <span class="threat-channel-arrow">→</span>
         </a>
 
-        <!-- 5. X / Twitter -->
-        <a href="https://x.com/DataVigilantes/" target="_blank" rel="noopener" class="threat-channel-item channel--x">
-          <div class="threat-channel-icon">𝕏</div>
-          <div class="threat-channel-info">
-            <div class="threat-channel-name">X (Twitter)</div>
-            <div class="threat-channel-sub">@DataVigilantes</div>
+        <!-- 3. Email -->
+        <a href="mailto:contact@datavigilantes.com" class="threat-channel-item channel--mail">
+          <div class="threat-channel-icon">
+            <img src="gmail.png" class="threat-channel-img" alt="Email" />
           </div>
-          <span class="threat-channel-arrow">→</span>
-        </a>
-
-        <!-- 6. Facebook -->
-        <a href="https://www.facebook.com/profile.php?id=61564888711393" target="_blank" rel="noopener" class="threat-channel-item channel--fb">
-          <div class="threat-channel-icon">🌐</div>
           <div class="threat-channel-info">
-            <div class="threat-channel-name">Facebook</div>
-            <div class="threat-channel-sub">Data Vigilantes Official</div>
+            <div class="threat-channel-name">Email Dispatch</div>
+            <div class="threat-channel-sub">contact@datavigilantes.com</div>
           </div>
           <span class="threat-channel-arrow">→</span>
         </a>
@@ -1645,7 +1616,21 @@
       return { group, video: websiteVideo };
     }
 
-    // 3. 3D Action Button Texture Builder with Crisp High-Resolution SVG Vectors
+    // Official Logo Images loaded for 2D canvas drawing (Prompt Requirement 2)
+    const officialIcons = {
+      whatsapp: new Image(),
+      instagram: new Image(),
+      insta: new Image(),
+      gmail: new Image(),
+      email: new Image()
+    };
+    officialIcons.whatsapp.src = 'whatsapp.png';
+    officialIcons.instagram.src = 'instagram.png';
+    officialIcons.insta.src = 'instagram.png';
+    officialIcons.gmail.src = 'gmail.png';
+    officialIcons.email.src = 'gmail.png';
+
+    // 3. 3D Action Button Texture Builder with Official Icons & Crisp Vectors
     function createActionButtonMesh(THREE, label, iconType, bgColor, borderColor, actionFn, width = 0.235, height = 0.135) {
       const scaleFactor = 2400;
       const canvas = document.createElement('canvas');
@@ -1655,246 +1640,132 @@
 
       const cw = canvas.width;
       const ch = canvas.height;
-
-      // Consistent Corner Border-Radius & Border Stroke across all buttons
-      const r = 56;
-      const pad = 6;
-      ctx.beginPath();
-      if (ctx.roundRect) {
-        ctx.roundRect(pad, pad, cw - pad * 2, ch - pad * 2, r);
-      } else {
-        ctx.rect(pad, pad, cw - pad * 2, ch - pad * 2);
-      }
-      ctx.fillStyle = bgColor;
-      ctx.fill();
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = borderColor;
-      ctx.stroke();
-
-      // Increased Font Sizing (~21%) and Icon Scaling (~22%) Maintaining Exact Aspect Ratio
       const font = '800 70px "Outfit", sans-serif';
-      ctx.font = font;
       const iconSize = 88;
       const iconGap = 20;
-      const textMetrics = ctx.measureText(label);
-      const textWidth = textMetrics.width;
-      const contentWidth = iconSize + iconGap + textWidth;
-      const startX = Math.round((cw - contentWidth) / 2);
-      const iconCenterX = startX + Math.round(iconSize / 2);
-      const iconCenterY = Math.round(ch / 2);
-      const textX = startX + iconSize + iconGap;
-
-      // Draw Crisp Vector Icons
-      if (iconType === 'save') {
-        // High-Resolution Floppy Disk Vector
-        ctx.save();
-        ctx.translate(iconCenterX, iconCenterY);
-        const scale = (iconSize * 0.88) / 24;
-        ctx.scale(scale, scale);
-        ctx.translate(-12, -12);
-
-        const diskBody = new Path2D('M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z');
-        ctx.fillStyle = '#38bdf8';
-        ctx.fill(diskBody);
-
-        const topLabel = new Path2D('M7 3v5h10V3H7z');
-        ctx.fillStyle = 'rgba(6, 22, 45, 0.9)';
-        ctx.fill(topLabel);
-
-        const shutter = new Path2D('M7 21v-8h10v8H7z');
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fill(shutter);
-
-        const notch = new Path2D('M9 15v4h3v-4H9z');
-        ctx.fillStyle = '#0284c7';
-        ctx.fill(notch);
-        ctx.restore();
-      } else if (iconType === 'text') {
-        // High-Resolution Crisp SMS Speech Bubble with 3 Dots
-        ctx.save();
-        ctx.translate(iconCenterX, iconCenterY);
-        const scale = (iconSize * 0.88) / 24;
-        ctx.scale(scale, scale);
-        ctx.translate(-12, -12);
-
-        const bubble = new Path2D('M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z');
-        ctx.fillStyle = '#10b981';
-        ctx.fill(bubble);
-
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.arc(8, 10, 1.8, 0, Math.PI * 2);
-        ctx.arc(12, 10, 1.8, 0, Math.PI * 2);
-        ctx.arc(16, 10, 1.8, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      } else if (iconType === 'whatsapp') {
-        // High-Resolution Crisp WhatsApp Badge & Handset
-        ctx.save();
-        ctx.translate(iconCenterX, iconCenterY);
-        const scale = (iconSize * 0.92) / 24;
-        ctx.scale(scale, scale);
-        ctx.translate(-12, -12);
-
-        ctx.beginPath();
-        ctx.arc(12, 12, 11, 0, Math.PI * 2);
-        ctx.fillStyle = '#25D366';
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.moveTo(7, 17);
-        ctx.lineTo(3.5, 20.5);
-        ctx.lineTo(6.5, 15);
-        ctx.closePath();
-        ctx.fillStyle = '#25D366';
-        ctx.fill();
-
-        const phone = new Path2D('M16.5 13.9c-.2-.1-1.3-.6-1.5-.7-.2-.1-.4-.1-.5.1-.2.2-.6.7-.7.9-.1.2-.3.2-.5.1a6.3 6.3 0 0 1-3-2.6c-.2-.4.2-.4.7-1.3 0-.1 0-.3-.1-.4s-.5-1.2-.7-1.6c-.2-.4-.4-.4-.5-.4h-.4c-.2 0-.4.1-.6.3-.7.7-.7 1.8 0 2.9 1.5 2.3 3.3 3.3 4.8 3.8.7.3 1.3.3 1.7.2.5-.1 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1z');
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fill(phone);
-        ctx.restore();
-      } else if (iconType === 'gmail' || iconType === 'email') {
-        // Official 4-Color Google Gmail 'M' Vectors
-        ctx.save();
-        ctx.translate(iconCenterX, iconCenterY);
-
-        const badgeW = Math.round(iconSize * 0.94);
-        const badgeH = Math.round(iconSize * 0.72);
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(-badgeW / 2, -badgeH / 2, badgeW, badgeH, 5);
-        } else {
-          ctx.rect(-badgeW / 2, -badgeH / 2, badgeW, badgeH);
-        }
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(0,0,0,0.08)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        const mw = Math.round(badgeW * 0.82);
-        const mh = Math.round(badgeH * 0.78);
-        const ox = -mw / 2;
-        const oy = -mh / 2;
-        const leg = mw * 0.23;
-
-        // Left Stalk (Red #EA4335)
-        ctx.fillStyle = '#EA4335';
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(ox, oy + mh * 0.25, leg, mh * 0.75, [0, 0, 0, 2]);
-        } else {
-          ctx.fillRect(ox, oy + mh * 0.25, leg, mh * 0.75);
-        }
-        ctx.fill();
-
-        // Left Diagonal Fold (Red #EA4335)
-        ctx.beginPath();
-        ctx.moveTo(ox, oy + mh * 0.25);
-        ctx.lineTo(ox + mw * 0.5, oy + mh * 0.62);
-        ctx.lineTo(ox + mw * 0.5, oy + mh * 0.36);
-        ctx.lineTo(ox + leg, oy);
-        ctx.lineTo(ox, oy);
-        ctx.closePath();
-        ctx.fill();
-
-        // Center Blue Fold (#4285F4)
-        ctx.fillStyle = '#4285F4';
-        ctx.beginPath();
-        ctx.moveTo(ox + leg, oy);
-        ctx.lineTo(ox + mw * 0.5, oy + mh * 0.36);
-        ctx.lineTo(ox + mw - leg, oy);
-        ctx.closePath();
-        ctx.fill();
-
-        // Right Diagonal Fold (Yellow #FBBC05)
-        ctx.fillStyle = '#FBBC05';
-        ctx.beginPath();
-        ctx.moveTo(ox + mw - leg, oy);
-        ctx.lineTo(ox + mw * 0.5, oy + mh * 0.36);
-        ctx.lineTo(ox + mw * 0.5, oy + mh * 0.62);
-        ctx.lineTo(ox + mw, oy + mh * 0.25);
-        ctx.lineTo(ox + mw, oy);
-        ctx.closePath();
-        ctx.fill();
-
-        // Right Stalk (Green #34A853)
-        ctx.fillStyle = '#34A853';
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(ox + mw - leg, oy + mh * 0.25, leg, mh * 0.75, [0, 0, 2, 0]);
-        } else {
-          ctx.fillRect(ox + mw - leg, oy + mh * 0.25, leg, mh * 0.75);
-        }
-        ctx.fill();
-        ctx.restore();
-      } else if (iconType === 'linkedin') {
-        // Official LinkedIn Rounded Icon Badge
-        ctx.save();
-        ctx.translate(iconCenterX, iconCenterY);
-
-        const badgeSize = Math.round(iconSize * 0.88);
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(-badgeSize / 2, -badgeSize / 2, badgeSize, badgeSize, 7);
-        } else {
-          ctx.rect(-badgeSize / 2, -badgeSize / 2, badgeSize, badgeSize);
-        }
-        ctx.fillStyle = '#0A66C2';
-        ctx.fill();
-
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = `bold ${Math.round(badgeSize * 0.62)}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('in', 0, 0);
-        ctx.restore();
-      } else if (iconType === 'insta') {
-        // Official Instagram Camera Lens Glyph on Radiant Gradient
-        ctx.save();
-        ctx.translate(iconCenterX, iconCenterY);
-
-        const badgeSize = Math.round(iconSize * 0.88);
-        const half = badgeSize / 2;
-        const grad = ctx.createLinearGradient(-half, half, half, -half);
-        grad.addColorStop(0, '#fdf497');
-        grad.addColorStop(0.3, '#fd5949');
-        grad.addColorStop(0.65, '#d6249f');
-        grad.addColorStop(1, '#285AEB');
-
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(-half, -half, badgeSize, badgeSize, 8);
-        } else {
-          ctx.rect(-half, -half, badgeSize, badgeSize);
-        }
-        ctx.fillStyle = grad;
-        ctx.fill();
-
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = Math.max(2, Math.round(badgeSize * 0.08));
-        ctx.beginPath();
-        ctx.arc(0, 0, badgeSize * 0.24, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.arc(badgeSize * 0.26, -badgeSize * 0.26, badgeSize * 0.07, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-
-      // Perfectly Vertically-Centered Label Text
-      ctx.font = font;
-      ctx.fillStyle = '#FFFFFF';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(label, textX, iconCenterY);
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.generateMipmaps = false;
       texture.minFilter = THREE.LinearFilter;
       texture.magFilter = THREE.LinearFilter;
+
+      function renderButton() {
+        ctx.clearRect(0, 0, cw, ch);
+
+        // Consistent Corner Border-Radius & Border Stroke across all buttons
+        const r = 56;
+        const pad = 6;
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(pad, pad, cw - pad * 2, ch - pad * 2, r);
+        } else {
+          ctx.rect(pad, pad, cw - pad * 2, ch - pad * 2);
+        }
+        ctx.fillStyle = bgColor;
+        ctx.fill();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = borderColor;
+        ctx.stroke();
+
+        ctx.font = font;
+        const textMetrics = ctx.measureText(label);
+        const textWidth = textMetrics.width;
+        const contentWidth = iconSize + iconGap + textWidth;
+        const startX = Math.round((cw - contentWidth) / 2);
+        const iconCenterX = startX + Math.round(iconSize / 2);
+        const iconCenterY = Math.round(ch / 2);
+        const textX = startX + iconSize + iconGap;
+
+        // Render Icons: Use official image files (whatsapp.png, instagram.png, gmail.png)
+        if (iconType === 'whatsapp' || iconType === 'instagram' || iconType === 'insta' || iconType === 'gmail' || iconType === 'email') {
+          const img = officialIcons[iconType];
+          if (img && img.complete && img.naturalWidth > 0) {
+            const drawSize = Math.round(iconSize * 0.96);
+            ctx.drawImage(img, Math.round(iconCenterX - drawSize / 2), Math.round(iconCenterY - drawSize / 2), drawSize, drawSize);
+          }
+        } else if (iconType === 'save') {
+          // High-Resolution Floppy Disk Vector
+          ctx.save();
+          ctx.translate(iconCenterX, iconCenterY);
+          const scale = (iconSize * 0.88) / 24;
+          ctx.scale(scale, scale);
+          ctx.translate(-12, -12);
+
+          const diskBody = new Path2D('M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z');
+          ctx.fillStyle = '#38bdf8';
+          ctx.fill(diskBody);
+
+          const topLabel = new Path2D('M7 3v5h10V3H7z');
+          ctx.fillStyle = 'rgba(6, 22, 45, 0.9)';
+          ctx.fill(topLabel);
+
+          const shutter = new Path2D('M7 21v-8h10v8H7z');
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fill(shutter);
+
+          const notch = new Path2D('M9 15v4h3v-4H9z');
+          ctx.fillStyle = '#0284c7';
+          ctx.fill(notch);
+          ctx.restore();
+        } else if (iconType === 'text') {
+          // High-Resolution Crisp SMS Speech Bubble with 3 Dots
+          ctx.save();
+          ctx.translate(iconCenterX, iconCenterY);
+          const scale = (iconSize * 0.88) / 24;
+          ctx.scale(scale, scale);
+          ctx.translate(-12, -12);
+
+          const bubble = new Path2D('M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z');
+          ctx.fillStyle = '#10b981';
+          ctx.fill(bubble);
+
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath();
+          ctx.arc(8, 10, 1.8, 0, Math.PI * 2);
+          ctx.arc(12, 10, 1.8, 0, Math.PI * 2);
+          ctx.arc(16, 10, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        } else if (iconType === 'linkedin') {
+          // Official LinkedIn Rounded Icon Badge
+          ctx.save();
+          ctx.translate(iconCenterX, iconCenterY);
+
+          const badgeSize = Math.round(iconSize * 0.88);
+          ctx.beginPath();
+          if (ctx.roundRect) {
+            ctx.roundRect(-badgeSize / 2, -badgeSize / 2, badgeSize, badgeSize, 7);
+          } else {
+            ctx.rect(-badgeSize / 2, -badgeSize / 2, badgeSize, badgeSize);
+          }
+          ctx.fillStyle = '#0A66C2';
+          ctx.fill();
+
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = `bold ${Math.round(badgeSize * 0.62)}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('in', 0, 0);
+          ctx.restore();
+        }
+
+        // Perfectly Vertically-Centered Label Text
+        ctx.font = font;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, textX, iconCenterY);
+
+        texture.needsUpdate = true;
+      }
+
+      // If official icon image is still loading, redraw when loaded
+      const targetImg = officialIcons[iconType];
+      if (targetImg && !targetImg.complete) {
+        targetImg.addEventListener('load', renderButton);
+      }
+
+      renderButton();
 
       const geometry = new THREE.PlaneGeometry(width, height);
       const material = new THREE.MeshBasicMaterial({
@@ -2691,11 +2562,17 @@
           if (videoDisplayGroup) videoDisplayGroup.visible = true;
           if (websiteVideo) websiteVideo.play().catch(() => {});
 
-          // Target Locked Audio Feedback (Prompt Requirement 2)
-          const lockSound = document.getElementById('ar-lock-sound');
-          if (lockSound) {
-            lockSound.currentTime = 0;
-            lockSound.play().catch((e) => console.log('Audio blocked:', e));
+          // Robotic "Card Detected" Audio Feedback (Web Speech API)
+          try {
+            if ('speechSynthesis' in window) {
+              window.speechSynthesis.cancel();
+              const utterance = new SpeechSynthesisUtterance("card detected");
+              utterance.pitch = 0.4; // Lower pitch for a mechanical/robotic tone
+              utterance.rate = 0.9;  // Slightly slower, deliberate pacing
+              window.speechSynthesis.speak(utterance);
+            }
+          } catch (e) {
+            console.log('Speech synthesis unavailable:', e);
           }
 
           const viewfinder = document.getElementById('viewfinder');
@@ -2780,11 +2657,17 @@
       if (videoDisplayGroup) videoDisplayGroup.visible = true;
       if (websiteVideo) websiteVideo.play().catch(() => {});
 
-      // Target Locked Audio Feedback
-      const lockSound = document.getElementById('ar-lock-sound');
-      if (lockSound) {
-        lockSound.currentTime = 0;
-        lockSound.play().catch((e) => console.log('Audio blocked:', e));
+      // Robotic "Card Detected" Audio Feedback (Web Speech API)
+      try {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance("card detected");
+          utterance.pitch = 0.4; // Lower pitch for a mechanical/robotic tone
+          utterance.rate = 0.9;  // Slightly slower, deliberate pacing
+          window.speechSynthesis.speak(utterance);
+        }
+      } catch (e) {
+        console.log('Speech synthesis unavailable:', e);
       }
 
       anchor.group.matrixAutoUpdate = true;
@@ -2816,10 +2699,9 @@
       // 1. Reset AR Live status and 3D visibility
       resetARLiveStatus();
 
-      // Audio Stop
-      const lockSound = document.getElementById('ar-lock-sound');
-      if (lockSound) {
-        try { lockSound.pause(); lockSound.currentTime = 0; } catch (e) {}
+      // Cancel any ongoing speech synthesis
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
       }
 
       // 2. Tear down Standalone 3D mode
