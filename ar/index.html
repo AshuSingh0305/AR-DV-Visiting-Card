@@ -1436,25 +1436,13 @@
       }, 600);
     }
 
-    let activeRenderer = null;
-    function applyTextureOptimizations(texture) {
-      texture.generateMipmaps = false;
-      texture.minFilter = THREE.LinearFilter;
-      texture.magFilter = THREE.LinearFilter;
-      if (activeRenderer && activeRenderer.capabilities) {
-        try {
-          texture.anisotropy = activeRenderer.capabilities.getMaxAnisotropy();
-        } catch (e) {}
-      }
-    }
-
     // ─── Texture Helpers ────────────────────────────────────────────────────
 
     // 1. Profile Banner Texture (User Avatar, Name, Title, DV Verified)
     function createProfileBannerTexture(THREE) {
       const canvas = document.createElement('canvas');
-      canvas.width = 1760;
-      canvas.height = 620;
+      canvas.width = 1024;
+      canvas.height = 360;
       const ctx = canvas.getContext('2d');
 
       const avatarImg = new Image();
@@ -1462,7 +1450,6 @@
       avatarImg.src = activeUser.photo;
 
       const texture = new THREE.CanvasTexture(canvas);
-      applyTextureOptimizations(texture);
 
       function redraw() {
         const photoFilename = activeUser.photo.split('/').pop();
@@ -1474,23 +1461,23 @@
         // Dark glass background with rounded corners
         ctx.save();
         ctx.beginPath();
-        const r = 68;
-        ctx.roundRect ? ctx.roundRect(28, 28, 1704, 564, r) : ctx.rect(28, 28, 1704, 564);
+        const r = 40;
+        ctx.roundRect ? ctx.roundRect(16, 16, 992, 328, r) : ctx.rect(16, 16, 992, 328);
         ctx.fillStyle = 'rgba(6, 14, 28, 0.94)';
         ctx.fill();
 
         // Neon cyber border gradient
-        const grad = ctx.createLinearGradient(0, 0, 1760, 620);
+        const grad = ctx.createLinearGradient(0, 0, 1024, 360);
         grad.addColorStop(0, '#E8394D');
         grad.addColorStop(0.5, '#38bdf8');
         grad.addColorStop(1, '#4A80C4');
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 6;
         ctx.strokeStyle = grad;
         ctx.stroke();
         ctx.restore();
 
         // Avatar circle
-        const avX = 310, avY = 310, avR = 206;
+        const avX = 180, avY = 180, avR = 120;
         ctx.save();
         ctx.beginPath();
         ctx.arc(avX, avY, avR, 0, Math.PI * 2);
@@ -1508,67 +1495,67 @@
         // Glowing avatar border ring
         ctx.save();
         ctx.beginPath();
-        ctx.arc(avX, avY, avR + 6, 0, Math.PI * 2);
-        ctx.lineWidth = 10;
+        ctx.arc(avX, avY, avR + 4, 0, Math.PI * 2);
+        ctx.lineWidth = 6;
         ctx.strokeStyle = '#38bdf8';
         ctx.shadowColor = '#38bdf8';
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 18;
         ctx.stroke();
         ctx.restore();
 
         // Online status dot
         ctx.save();
         ctx.beginPath();
-        ctx.arc(avX + 138, avY + 138, 26, 0, Math.PI * 2);
+        ctx.arc(avX + 80, avY + 80, 16, 0, Math.PI * 2);
         ctx.fillStyle = '#10b981';
         ctx.shadowColor = '#10b981';
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 12;
         ctx.fill();
-        ctx.lineWidth = 6;
+        ctx.lineWidth = 4;
         ctx.strokeStyle = '#060e1a';
         ctx.stroke();
         ctx.restore();
 
         // Profile Text
-        const textX = 585;
+        const textX = 340;
 
         // Verified Pill
         ctx.save();
         ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
         ctx.beginPath();
-        ctx.roundRect ? ctx.roundRect(textX, 102, 440, 62, 31) : ctx.rect(textX, 102, 440, 62);
+        ctx.roundRect ? ctx.roundRect(textX, 60, 260, 36, 18) : ctx.rect(textX, 60, 260, 36);
         ctx.fill();
         ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 2;
         ctx.stroke();
 
-        ctx.font = 'bold 30px "JetBrains Mono", monospace';
+        ctx.font = 'bold 18px "JetBrains Mono", monospace';
         ctx.fillStyle = '#38bdf8';
-        ctx.fillText('DATA VIGILANTES', textX + 38, 145);
+        ctx.fillText('DATA VIGILANTES', textX + 22, 85);
         ctx.restore();
 
         // Full Name
         ctx.save();
-        ctx.font = '900 96px "Outfit", sans-serif';
+        ctx.font = '900 56px "Outfit", sans-serif';
         ctx.fillStyle = '#FFFFFF';
         ctx.shadowColor = 'rgba(0,0,0,0.8)';
-        ctx.shadowBlur = 22;
-        ctx.fillText(activeUser.name, textX, 280);
+        ctx.shadowBlur = 14;
+        ctx.fillText(activeUser.name, textX, 165);
         ctx.restore();
 
         // Title / Role
         ctx.save();
-        ctx.font = '600 54px "Outfit", sans-serif';
+        ctx.font = '600 32px "Outfit", sans-serif';
         ctx.fillStyle = '#38bdf8';
-        ctx.letterSpacing = '1.5px';
-        ctx.fillText(activeUser.title.toUpperCase(), textX, 385);
+        ctx.letterSpacing = '1px';
+        ctx.fillText(activeUser.title.toUpperCase(), textX, 225);
         ctx.restore();
 
         // Services Tags
         ctx.save();
-        ctx.font = '500 36px "JetBrains Mono", monospace';
+        ctx.font = '500 22px "JetBrains Mono", monospace';
         ctx.fillStyle = 'rgba(200, 220, 245, 0.7)';
-        ctx.fillText('DATA PROTECTION • OSINT • CYBERSECURITY', textX, 480);
+        ctx.fillText('DATA PROTECTION • OSINT • CYBERSECURITY', textX, 280);
         ctx.restore();
 
         texture.needsUpdate = true;
@@ -1611,37 +1598,38 @@
       }
 
       const videoTex = new THREE.VideoTexture(websiteVideo);
-      applyTextureOptimizations(videoTex);
+      videoTex.generateMipmaps = false;
+      videoTex.minFilter = THREE.LinearFilter;
+      videoTex.magFilter = THREE.LinearFilter;
       videoTex.format = THREE.RGBAFormat;
 
       const group = new THREE.Group();
-      // Scaled and positioned at x = 1.65 to float distinctly to the far right edge of the physical card
-      group.position.set(1.65, 0, -0.05);
+      group.position.set(1.68, 0, 0.05);
       group.rotation.y = -0.15;
-      group.scale.set(1.35, 1.35, 1.35);
 
-      // 1. Dark Bezel Backing Frame (Z = 0.00) - 16:9 Aspect Ratio (2.77 x 1.56) matching Services height (1.56)
+      // 1. Dark Bezel Backing Frame (Z = 0.00)
       const backMesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(2.77, 1.56),
+        new THREE.PlaneGeometry(2.09, 1.32),
         new THREE.MeshBasicMaterial({ color: 0x030712, side: THREE.DoubleSide, depthWrite: true })
       );
       backMesh.position.z = 0.00;
       backMesh.frustumCulled = false;
       group.add(backMesh);
 
-      // 2. Glowing Cyan Bezel Border (Z = 0.005) - strictly 16:9 (2.77 x 1.56)
-      const borderEdges = new THREE.EdgesGeometry(new THREE.PlaneGeometry(2.77, 1.56));
+      // 2. Glowing Cyan Bezel Border (Z = 0.006)
+      const borderEdges = new THREE.EdgesGeometry(new THREE.PlaneGeometry(2.09, 1.32));
       const borderLine = new THREE.LineSegments(
         borderEdges,
-        new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.85, linewidth: 2, depthWrite: false })
+        new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.85, linewidth: 2 })
       );
-      borderLine.position.z = 0.005;
+      borderLine.position.z = 0.006;
       borderLine.frustumCulled = false;
       group.add(borderLine);
 
-      // 3. Widescreen 16:9 Video Display Mesh (2.72 x 1.53) sitting at Z = 0.010 on the panel
+      // 3. Widescreen Video Display Mesh (offset by at least position.z = 0.016 to prevent Z-fighting)
+      // Standard MeshBasicMaterial without AdditiveBlending ensures natural, flicker-free playback
       const videoMesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(2.72, 1.53),
+        new THREE.PlaneGeometry(2.05, 1.28),
         new THREE.MeshBasicMaterial({
           map: videoTex,
           side: THREE.DoubleSide,
@@ -1649,7 +1637,7 @@
           depthWrite: true
         })
       );
-      videoMesh.position.z = 0.010;
+      videoMesh.position.z = 0.016;
       videoMesh.frustumCulled = false;
       videoMesh.userData = {
         action: () => window.open('https://www.datavigilantes.com', '_blank')
@@ -1676,7 +1664,7 @@
 
     // 3. 3D Action Button Texture Builder with Official Icons & Crisp Vectors
     function createActionButtonMesh(THREE, label, iconType, bgColor, borderColor, actionFn, width = 0.225, height = 0.125) {
-      const scaleFactor = 4000;
+      const scaleFactor = 2400;
       const canvas = document.createElement('canvas');
       canvas.width = Math.round(width * scaleFactor);
       canvas.height = Math.round(height * scaleFactor);
@@ -1684,13 +1672,15 @@
 
       const cw = canvas.width;
       const ch = canvas.height;
-      const font = `800 ${Math.round(ch * 0.28)}px "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+      const font = '800 68px "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       // Comfortably fill the left side of the button (54% of button height)
       const iconSize = Math.round(ch * 0.54);
-      const iconGap = Math.round(ch * 0.08);
+      const iconGap = 22;
 
       const texture = new THREE.CanvasTexture(canvas);
-      applyTextureOptimizations(texture);
+      texture.generateMipmaps = false;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
 
       function renderButton() {
         ctx.clearRect(0, 0, cw, ch);
@@ -1821,8 +1811,7 @@
       const material = new THREE.MeshBasicMaterial({
         map: texture,
         transparent: true,
-        side: THREE.DoubleSide,
-        depthWrite: true
+        side: THREE.DoubleSide
       });
 
       const mesh = new THREE.Mesh(geometry, material);
@@ -1834,9 +1823,9 @@
 
     // 3b. 3D Primary CTA Button Builder: Crisp Flat White Alert Icon + High-Contrast Bold Text
     function createPrimaryCTAButtonMesh(THREE, actionFn, width = 0.94, height = 0.160) {
-      // Exact 1:1 Aspect Ratio Synchronization between Geometry and Canvas (High-DPI Supersampled)
+      // Exact 1:1 Aspect Ratio Synchronization between Geometry and Canvas
       const aspect = width / height;
-      const ch = 800; // High-DPI crisp native vertical resolution
+      const ch = 400; // Crisp native vertical resolution
       const cw = Math.round(ch * aspect); // Matched horizontal resolution (zero squishing)
 
       const canvas = document.createElement('canvas');
@@ -1845,14 +1834,16 @@
       const ctx = canvas.getContext('2d');
 
       const texture = new THREE.CanvasTexture(canvas);
-      applyTextureOptimizations(texture);
+      texture.generateMipmaps = false;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
 
       function renderCTA() {
         ctx.clearRect(0, 0, cw, ch);
 
         // Solid Red Background (#E83C4B) with matching corner radius
         const r = Math.round(ch * 0.36);
-        const pad = 16;
+        const pad = 8;
         ctx.beginPath();
         if (ctx.roundRect) {
           ctx.roundRect(pad, pad, cw - pad * 2, ch - pad * 2, r);
@@ -1863,12 +1854,12 @@
         ctx.fill();
 
         // High-contrast clean white border stroke
-        ctx.lineWidth = 16;
+        ctx.lineWidth = 8;
         ctx.strokeStyle = '#FFFFFF';
         ctx.stroke();
 
         // Native undistorted font rendering with adequate left/right padding
-        const font = '900 172px "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        const font = '900 86px "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
         ctx.font = font;
 
         const openBracket = '[';
@@ -1876,8 +1867,8 @@
         const openBracketWidth = ctx.measureText(openBracket).width;
         const labelWidth = ctx.measureText(labelText).width;
 
-        const iconSize = 260;
-        const gap = 52;
+        const iconSize = 130;
+        const gap = 26;
         const totalContentWidth = openBracketWidth + gap + iconSize + gap + labelWidth;
         const startX = Math.round((cw - totalContentWidth) / 2);
         const iconCenterY = Math.round(ch / 2);
@@ -1945,8 +1936,7 @@
       const material = new THREE.MeshBasicMaterial({
         map: texture,
         transparent: true,
-        side: THREE.DoubleSide,
-        depthWrite: true
+        side: THREE.DoubleSide
       });
 
       const mesh = new THREE.Mesh(geometry, material);
@@ -1959,34 +1949,34 @@
     // 4. 3D Services Menu Texture Builder (High-Resolution Left Floating Glass Menu)
     function createServicesMenuTexture(THREE) {
       const canvas = document.createElement('canvas');
-      canvas.width = 1600;
-      canvas.height = 2360;
+      canvas.width = 800;
+      canvas.height = 1180;
       const ctx = canvas.getContext('2d');
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Top Tag
       ctx.fillStyle = '#38bdf8';
-      ctx.font = '700 36px "JetBrains Mono", monospace';
-      ctx.letterSpacing = '6px';
-      ctx.fillText('DATA VIGILANTES', 100, 128);
+      ctx.font = '700 18px "JetBrains Mono", monospace';
+      ctx.letterSpacing = '3px';
+      ctx.fillText('DATA VIGILANTES', 50, 64);
 
       // Main Header Title: "SERVICES"
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = '900 76px "Outfit", sans-serif';
-      ctx.letterSpacing = '2px';
-      ctx.fillText('SERVICES', 100, 232);
+      ctx.font = '900 38px "Outfit", sans-serif';
+      ctx.letterSpacing = '1px';
+      ctx.fillText('SERVICES', 50, 116);
 
       // Glowing Divider Line
-      const grad = ctx.createLinearGradient(100, 276, 1500, 276);
+      const grad = ctx.createLinearGradient(50, 138, 750, 138);
       grad.addColorStop(0, '#38bdf8');
       grad.addColorStop(0.5, '#E8394D');
       grad.addColorStop(1, 'rgba(56, 189, 248, 0.1)');
       ctx.strokeStyle = grad;
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(100, 276);
-      ctx.lineTo(1500, 276);
+      ctx.moveTo(50, 138);
+      ctx.lineTo(750, 138);
       ctx.stroke();
 
       // Services List with alternating cyan & red accent dots and individual descriptions
@@ -1999,115 +1989,111 @@
         { name: 'Commercial Digital Security', desc: 'Enterprise Hardening & Network Auditing', dot: '#E8394D', num: '06' }
       ];
 
-      const startY = 420;
-      const rowHeight = 280;
+      const startY = 210;
+      const rowHeight = 140;
 
       services.forEach((svc, i) => {
         const y = startY + (i * rowHeight);
 
         // Index Number
-        ctx.font = '700 34px "JetBrains Mono", monospace';
+        ctx.font = '700 17px "JetBrains Mono", monospace';
         ctx.fillStyle = 'rgba(56, 189, 248, 0.75)';
-        ctx.fillText(svc.num, 100, y);
+        ctx.fillText(svc.num, 50, y);
 
         // Accent Dot (Outer Glow + Core)
         ctx.save();
         ctx.beginPath();
-        ctx.arc(216, y - 12, 14, 0, Math.PI * 2);
+        ctx.arc(108, y - 6, 7, 0, Math.PI * 2);
         ctx.fillStyle = svc.dot;
         ctx.shadowColor = svc.dot;
-        ctx.shadowBlur = 28;
+        ctx.shadowBlur = 14;
         ctx.fill();
         ctx.restore();
 
         // Inner white specular pin
         ctx.beginPath();
-        ctx.arc(216, y - 12, 6, 0, Math.PI * 2);
+        ctx.arc(108, y - 6, 3, 0, Math.PI * 2);
         ctx.fillStyle = '#FFFFFF';
         ctx.fill();
 
         // Service Label Title
-        ctx.font = '800 58px "Outfit", sans-serif';
+        ctx.font = '800 29px "Outfit", sans-serif';
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(svc.name, 284, y + 4);
+        ctx.fillText(svc.name, 142, y + 2);
 
         // Service Description Line
-        ctx.font = '500 36px "Outfit", "Inter", sans-serif';
+        ctx.font = '500 18px "Outfit", "Inter", sans-serif';
         ctx.fillStyle = 'rgba(180, 215, 248, 0.88)';
-        ctx.fillText(svc.desc, 284, y + 68);
+        ctx.fillText(svc.desc, 142, y + 34);
 
         // Row separator
         if (i < services.length - 1) {
           ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.moveTo(100, y + 128);
-          ctx.lineTo(1500, y + 128);
+          ctx.moveTo(50, y + 64);
+          ctx.lineTo(750, y + 64);
           ctx.stroke();
         }
       });
 
       // Bottom Cyber Badge
       ctx.save();
-      ctx.font = '500 30px "JetBrains Mono", monospace';
+      ctx.font = '500 15px "JetBrains Mono", monospace';
       ctx.fillStyle = 'rgba(200, 220, 245, 0.65)';
-      ctx.fillText('ENCRYPTED • VERIFIED VIGILANCE', 100, 2240);
+      ctx.fillText('ENCRYPTED • VERIFIED VIGILANCE', 50, 1120);
       ctx.restore();
 
-      const texture = new THREE.CanvasTexture(canvas);
-      applyTextureOptimizations(texture);
-      return texture;
+      return new THREE.CanvasTexture(canvas);
     }
 
     // 5. Left-Aligned Floating 3D Glass Menu Mesh Builder (Scaled up ~35% with Dedicated #services Routing)
     function createServicesMenuMesh(THREE) {
       const group = new THREE.Group();
-      // Scaled up by 35% and positioned at x = -1.65 to float distinctly to the far left edge of the physical card
-      group.position.set(-1.65, 0, -0.05);
+      // Scaled up by 35% and positioned at x = -1.42 so total visual presence balances website video without clipping
+      group.position.set(-1.42, 0, 0.05);
       group.rotation.y = 0.15;
       group.scale.set(1.35, 1.35, 1.35);
 
-      // Glass backing panel (Z = 0.00 inside group)
+      // Glass backing panel
       const glassGeo = new THREE.PlaneGeometry(1.08, 1.56);
       const glassMat = new THREE.MeshBasicMaterial({
         color: 0x050a0f,
         transparent: true,
         opacity: 0.82,
-        side: THREE.DoubleSide,
-        depthWrite: true
+        side: THREE.DoubleSide
       });
       const glassMesh = new THREE.Mesh(glassGeo, glassMat);
-      glassMesh.position.z = 0.00;
       glassMesh.frustumCulled = false;
       group.add(glassMesh);
 
-      // Thin glowing cyan border (Z = 0.005)
+      // Thin glowing cyan border
       const glassEdges = new THREE.EdgesGeometry(glassGeo);
       const borderMat = new THREE.LineBasicMaterial({
         color: 0x38bdf8,
         transparent: true,
         opacity: 0.85,
-        linewidth: 2,
-        depthWrite: false
+        linewidth: 2
       });
       const glassBorder = new THREE.LineSegments(glassEdges, borderMat);
-      glassBorder.position.z = 0.005;
+      glassBorder.position.z = 0.008;
       glassBorder.frustumCulled = false;
       group.add(glassBorder);
 
-      // Text canvas plane sitting elevated at Z = 0.010 to prevent Z-fighting
-      // Geometry strictly matches 1600x2360 aspect ratio (1.04 x 1.534)
+      // Text canvas plane
       const servicesTex = createServicesMenuTexture(THREE);
+      servicesTex.generateMipmaps = false;
+      servicesTex.minFilter = THREE.LinearFilter;
+      servicesTex.magFilter = THREE.LinearFilter;
 
-      const textGeo = new THREE.PlaneGeometry(1.04, 1.534);
+      const textGeo = new THREE.PlaneGeometry(1.04, 1.52);
       const textMat = new THREE.MeshBasicMaterial({
         map: servicesTex,
         transparent: true,
-        side: THREE.DoubleSide,
-        depthWrite: false
+        side: THREE.DoubleSide
       });
       const textMesh = new THREE.Mesh(textGeo, textMat);
-      textMesh.position.z = 0.010;
+      textMesh.position.z = 0.018;
       textMesh.frustumCulled = false;
       group.add(textMesh);
 
@@ -2130,51 +2116,53 @@
       const arRoot = new THREE.Group();
       arRoot.visible = true;
 
-      // ── 1. Central Card Base Hologram Frame (Z = 0.001) ──
+      // ── 1. Central Card Base Hologram Frame ──
+      // ── 1. Central Card Base Hologram Frame ──
+      // Scaled down by ~8% to 0.96 x 0.68 to prevent crowding and side panel bleeding
       const frameGeo = new THREE.PlaneGeometry(0.96, 0.68);
       const frameEdges = new THREE.EdgesGeometry(frameGeo);
       const frameLine = new THREE.LineSegments(
         frameEdges,
-        new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65, linewidth: 2, depthWrite: false })
+        new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65, linewidth: 2 })
       );
-      frameLine.position.z = 0.001;
+      frameLine.position.z = 0.01;
       frameLine.frustumCulled = false;
       arRoot.add(frameLine);
 
-      // ── 2. Top Profile Plaque (Avatar, Name, Role) (Floating at Z = 0.05) ──
+      // ── 2. Top Profile Plaque (Avatar, Name, Role) ──
       const { texture: profileTex } = createProfileBannerTexture(THREE);
       const profileMesh = new THREE.Mesh(
         new THREE.PlaneGeometry(0.88, 0.31),
-        new THREE.MeshBasicMaterial({ map: profileTex, transparent: true, side: THREE.DoubleSide, depthWrite: true })
+        new THREE.MeshBasicMaterial({ map: profileTex, transparent: true, side: THREE.DoubleSide })
       );
-      profileMesh.position.set(0, 0.50, 0.05);
+      profileMesh.position.set(0, 0.50, 0.12);
       profileMesh.rotation.x = 0.12;
       profileMesh.frustumCulled = false;
       arRoot.add(profileMesh);
 
       // Holographic vertical stem connecting card to profile
       const stemGeo = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(0, 0.34, 0.005),
-        new THREE.Vector3(0, 0.38, 0.045)
+        new THREE.Vector3(0, 0.34, 0.02),
+        new THREE.Vector3(0, 0.38, 0.10)
       ]);
       const stemLine = new THREE.Line(
         stemGeo,
-        new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7, depthWrite: false })
+        new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7 })
       );
       stemLine.frustumCulled = false;
       arRoot.add(stemLine);
 
-      // Glowing cyan rings floating around avatar (Z = 0.055)
+      // Glowing cyan rings floating around avatar
       const ringGeo = new THREE.TorusGeometry(0.11, 0.005, 8, 48);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.8, depthWrite: false });
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.8 });
       const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-      ringMesh.position.set(-0.28, 0.50, 0.055);
+      ringMesh.position.set(-0.28, 0.50, 0.13);
       ringMesh.frustumCulled = false;
       arRoot.add(ringMesh);
 
-      // ── 3. Top Pill Header: Single Centered [ Save Contact ] (Z = 0.065) ──
+      // ── 3. Top Pill Header: Single Centered [ Save Contact ] ──
       const topPillY = 0.73;
-      const topPillZ = 0.065;
+      const topPillZ = 0.14;
 
       const btnTopSave = createActionButtonMesh(
         THREE, 'Save Contact', 'save',
@@ -2185,9 +2173,10 @@
       btnTopSave.position.set(0, topPillY, topPillZ);
       arRoot.add(btnTopSave);
 
-      // ── 4. Primary CTA Button: Crisp White Alert Icon + [ RUN FREE BREACH SCAN ] (Z = 0.06) ──
+      // ── 4. Primary CTA Button: Crisp White Alert Icon + [ RUN FREE BREACH SCAN ] ──
+      // Positioned at ctaY = -0.480, completely clear of Card Frame (bottom: -0.340) with 0.060 gap
       const ctaY = -0.480;
-      const ctaZ = 0.06;
+      const ctaZ = 0.08;
       const btnPrimaryCTA = createPrimaryCTAButtonMesh(
         THREE,
         () => openThreatScanModal(),
@@ -2196,10 +2185,11 @@
       btnPrimaryCTA.position.set(0, ctaY, ctaZ);
       arRoot.add(btnPrimaryCTA);
 
-      // ── 5. Bottom Social Button Row: (WhatsApp, Email, LinkedIn, Insta) (Z = 0.06) ──
+      // ── 5. Bottom Social Button Row: (WhatsApp, Email, LinkedIn, Insta) ──
+      // Pushed further down to dockY = -0.680 to create a distinct, mathematically even gap (0.058 gap from CTA)
       const bW = 0.225;
       const bH = 0.125;
-      const btnZ = 0.06;
+      const btnZ = 0.08;
       const dockY = -0.680;
       const gap = 0.022;
       const step = bW + gap; // 0.247: Centers 4 buttons at -0.3705, -0.1235, +0.1235, +0.3705
@@ -2245,14 +2235,13 @@
       btnInsta.position.set(1.5 * step, dockY, btnZ);
       arRoot.add(btnInsta);
 
-      // ── 6. Center DV 3D Hologram Logo Float (Z = 0.00 to float smoothly at card plane) ──
+      // ── 6. Center DV 3D Hologram Logo Float ──
       const logoTex = new THREE.TextureLoader().load('../dv-logo.png');
-      applyTextureOptimizations(logoTex);
       const centerLogoMesh = new THREE.Mesh(
         new THREE.PlaneGeometry(0.50, 0.32),
-        new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, side: THREE.DoubleSide, depthWrite: true })
+        new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, side: THREE.DoubleSide })
       );
-      centerLogoMesh.position.set(0, 0, 0.00);
+      centerLogoMesh.position.set(0, 0, 0.16);
       centerLogoMesh.frustumCulled = false;
       arRoot.add(centerLogoMesh);
 
@@ -2514,7 +2503,6 @@
       standaloneRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
       standaloneRenderer.setSize(w, h);
       standaloneRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      activeRenderer = standaloneRenderer;
       container.appendChild(standaloneRenderer.domElement);
 
       // 4. Studio Lighting
@@ -2605,9 +2593,9 @@
         if (!startTime) startTime = timestamp;
         const elapsed = (timestamp - startTime) / 1000;
 
-        const float = Math.sin(elapsed * 2.0) * 0.005;
-        holo.profileMesh.position.z = 0.05 + float;
-        if (holo.centerLogoMesh) holo.centerLogoMesh.position.z = 0.00 + float * 1.5;
+        const float = Math.sin(elapsed * 2.0) * 0.015;
+        holo.profileMesh.position.z = 0.12 + float;
+        if (holo.centerLogoMesh) holo.centerLogoMesh.position.z = 0.16 + float * 1.5;
         holo.ringMesh.rotation.z = elapsed * 1.5;
 
         if (standaloneControls) {
@@ -2668,7 +2656,6 @@
         });
 
         const { renderer, scene, camera } = mindarThree;
-        activeRenderer = renderer;
         const THREE = (window.MINDAR && window.MINDAR.IMAGE && window.MINDAR.IMAGE.THREE) || window.THREE;
 
         // Lighting
@@ -2785,13 +2772,13 @@
             if (!startTime) startTime = timestamp;
             const elapsed = (timestamp - startTime) / 1000;
 
-            const float = Math.sin(elapsed * 2.0) * 0.005;
-            holo.profileMesh.position.z = 0.05 + float;
-            if (holo.centerLogoMesh) holo.centerLogoMesh.position.z = 0.00 + float * 1.5;
+            const float = Math.sin(elapsed * 2.0) * 0.015;
+            holo.profileMesh.position.z = 0.12 + float;
+            if (holo.centerLogoMesh) holo.centerLogoMesh.position.z = 0.16 + float * 1.5;
             holo.ringMesh.rotation.z = elapsed * 1.5;
 
             if (servicesMenu && servicesMenu.visible) {
-              servicesMenu.position.z = -0.05 + Math.sin(elapsed * 1.8) * 0.003;
+              servicesMenu.position.z = Math.sin(elapsed * 1.8) * 0.01;
             }
 
             renderer.render(scene, camera);
