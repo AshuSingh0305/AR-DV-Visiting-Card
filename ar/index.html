@@ -1604,7 +1604,7 @@
       videoTex.format = THREE.RGBAFormat;
 
       const group = new THREE.Group();
-      group.position.set(1.68, 0, 0.05);
+      group.position.set(1.00, 0, -0.05);
       group.rotation.y = -0.15;
 
       // 1. Dark Bezel Backing Frame (Z = 0.00)
@@ -2050,8 +2050,8 @@
     // 5. Left-Aligned Floating 3D Glass Menu Mesh Builder (Scaled up ~35% with Dedicated #services Routing)
     function createServicesMenuMesh(THREE) {
       const group = new THREE.Group();
-      // Scaled up by 35% and positioned at x = -1.42 so total visual presence balances website video without clipping
-      group.position.set(-1.42, 0, 0.05);
+      // Scaled up by 35% and positioned at x = -0.85 so total visual presence fits portrait FOV without clipping
+      group.position.set(-0.85, 0, -0.05);
       group.rotation.y = 0.15;
       group.scale.set(1.35, 1.35, 1.35);
 
@@ -2135,7 +2135,7 @@
         new THREE.PlaneGeometry(0.88, 0.31),
         new THREE.MeshBasicMaterial({ map: profileTex, transparent: true, side: THREE.DoubleSide })
       );
-      profileMesh.position.set(0, 0.50, 0.12);
+      profileMesh.position.set(0, 0.50, 0.18);
       profileMesh.rotation.x = 0.12;
       profileMesh.frustumCulled = false;
       arRoot.add(profileMesh);
@@ -2162,7 +2162,7 @@
 
       // ── 3. Top Pill Header: Single Centered [ Save Contact ] ──
       const topPillY = 0.73;
-      const topPillZ = 0.14;
+      const topPillZ = 0.20;
 
       const btnTopSave = createActionButtonMesh(
         THREE, 'Save Contact', 'save',
@@ -2176,7 +2176,7 @@
       // ── 4. Primary CTA Button: Crisp White Alert Icon + [ RUN FREE BREACH SCAN ] ──
       // Positioned at ctaY = -0.480, completely clear of Card Frame (bottom: -0.340) with 0.060 gap
       const ctaY = -0.480;
-      const ctaZ = 0.08;
+      const ctaZ = 0.14;
       const btnPrimaryCTA = createPrimaryCTAButtonMesh(
         THREE,
         () => openThreatScanModal(),
@@ -2189,7 +2189,7 @@
       // Pushed further down to dockY = -0.680 to create a distinct, mathematically even gap (0.058 gap from CTA)
       const bW = 0.225;
       const bH = 0.125;
-      const btnZ = 0.08;
+      const btnZ = 0.14;
       const dockY = -0.680;
       const gap = 0.022;
       const step = bW + gap; // 0.247: Centers 4 buttons at -0.3705, -0.1235, +0.1235, +0.3705
@@ -2241,7 +2241,7 @@
         new THREE.PlaneGeometry(0.50, 0.32),
         new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, side: THREE.DoubleSide })
       );
-      centerLogoMesh.position.set(0, 0, 0.16);
+      centerLogoMesh.position.set(0, 0, 0.22);
       centerLogoMesh.frustumCulled = false;
       arRoot.add(centerLogoMesh);
 
@@ -2594,8 +2594,8 @@
         const elapsed = (timestamp - startTime) / 1000;
 
         const float = Math.sin(elapsed * 2.0) * 0.015;
-        holo.profileMesh.position.z = 0.12 + float;
-        if (holo.centerLogoMesh) holo.centerLogoMesh.position.z = 0.16 + float * 1.5;
+        holo.profileMesh.position.z = 0.18 + float;
+        if (holo.centerLogoMesh) holo.centerLogoMesh.position.z = 0.22 + float * 1.5;
         holo.ringMesh.rotation.z = elapsed * 1.5;
 
         if (standaloneControls) {
@@ -2648,7 +2648,11 @@
           maxTrack: 1,
           uiLoading: 'no',
           uiScanning: 'no',
-          uiError: 'no'
+          uiError: 'no',
+          filterMinCF: 0.001,
+          filterBeta: 1000,
+          missTolerance: 10,
+          warmupTolerance: 3
         });
 
         const { renderer, scene, camera } = mindarThree;
@@ -2693,7 +2697,9 @@
         setup3DInteractions(camera, document.getElementById('ar-container'));
 
         // Target Found / Lost Handlers
+        let targetLostTimer = null;
         anchor.onTargetFound = () => {
+          if (targetLostTimer) { clearTimeout(targetLostTimer); targetLostTimer = null; }
           directMode = false;
           anchor.group.matrixAutoUpdate = false;
           anchor.group.visible = true;
@@ -2734,9 +2740,14 @@
           if (helperBar) helperBar.classList.add('detected');
         };
 
+        // Target Lost — debounced 600ms delay to prevent instant snap-off on minor shakes
         anchor.onTargetLost = () => {
           if (directMode) return;
-          resetARLiveStatus();
+          if (targetLostTimer) clearTimeout(targetLostTimer);
+          targetLostTimer = setTimeout(() => {
+            if (!directMode) resetARLiveStatus();
+            targetLostTimer = null;
+          }, 600);
         };
 
         // Start MindAR Camera Engine
@@ -2762,8 +2773,8 @@
             const elapsed = (timestamp - startTime) / 1000;
 
             const float = Math.sin(elapsed * 2.0) * 0.015;
-            holo.profileMesh.position.z = 0.12 + float;
-            if (holo.centerLogoMesh) holo.centerLogoMesh.position.z = 0.16 + float * 1.5;
+            holo.profileMesh.position.z = 0.18 + float;
+            if (holo.centerLogoMesh) holo.centerLogoMesh.position.z = 0.22 + float * 1.5;
             holo.ringMesh.rotation.z = elapsed * 1.5;
 
             if (servicesMenu && servicesMenu.visible) {
