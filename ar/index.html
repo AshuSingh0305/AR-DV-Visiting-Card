@@ -1604,8 +1604,10 @@
       videoTex.format = THREE.RGBAFormat;
 
       const group = new THREE.Group();
-      group.position.set(1.68, 0, 0.05);
-      group.rotation.y = -0.15;
+      // Curved Cockpit layout: angled inward toward camera, scaled down ~18%
+      group.position.set(1.42, 0, -0.02);
+      group.rotation.y = -Math.PI / 8; // -22.5 degrees inward curve
+      group.scale.set(0.82, 0.82, 0.82);
 
       // 1. Dark Bezel Backing Frame (Z = 0.00)
       const backMesh = new THREE.Mesh(
@@ -2047,13 +2049,13 @@
       return new THREE.CanvasTexture(canvas);
     }
 
-    // 5. Left-Aligned Floating 3D Glass Menu Mesh Builder (Scaled up ~35% with Dedicated #services Routing)
+    // 5. Left-Aligned Floating 3D Glass Menu Mesh Builder (Curved Cockpit Layout)
     function createServicesMenuMesh(THREE) {
       const group = new THREE.Group();
-      // Scaled up by 35% and positioned at x = -1.42 so total visual presence balances website video without clipping
-      group.position.set(-1.42, 0, 0.05);
-      group.rotation.y = 0.15;
-      group.scale.set(1.35, 1.35, 1.35);
+      // Curved Cockpit layout: angled inward toward camera, scaled down ~18% (1.35 * 0.82 = 1.107)
+      group.position.set(-1.42, 0, -0.02);
+      group.rotation.y = Math.PI / 8; // +22.5 degrees inward curve
+      group.scale.set(1.107, 1.107, 1.107);
 
       // Glass backing panel
       const glassGeo = new THREE.PlaneGeometry(1.08, 1.56);
@@ -2649,8 +2651,8 @@
           uiLoading: 'no',
           uiScanning: 'no',
           uiError: 'no',
-          filterMinCF: 0.001,
-          filterBeta: 1000,
+          filterMinCF: 0.0001,
+          filterBeta: 0.001,
           missTolerance: 10,
           warmupTolerance: 3
         });
