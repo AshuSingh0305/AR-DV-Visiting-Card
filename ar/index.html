@@ -5,7 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Data Vigilantes — AR Business Card</title>
-  <meta name="description" content="Augmented Reality Business Card for Data Vigilantes. Scan physical card to reveal interactive AR profile, video preview, and direct contacts." />
+  <meta name="description"
+    content="Augmented Reality Business Card for Data Vigilantes. Scan physical card to reveal interactive AR profile, video preview, and direct contacts." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -202,8 +203,15 @@
     }
 
     @keyframes floatBadge {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-5px);
+      }
     }
 
     .badge-avatar {
@@ -279,21 +287,36 @@
     }
 
     @keyframes logoGlow {
-      0% { transform: scale(0.96); filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4)); }
-      100% { transform: scale(1.04); filter: drop-shadow(0 0 16px rgba(232, 57, 77, 0.6)); }
+      0% {
+        transform: scale(0.96);
+        filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4));
+      }
+
+      100% {
+        transform: scale(1.04);
+        filter: drop-shadow(0 0 16px rgba(232, 57, 77, 0.6));
+      }
     }
 
     .card-illus::after {
       content: '';
       position: absolute;
-      top: 0; left: -100%; width: 200%; height: 2px;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 2px;
       background: linear-gradient(90deg, transparent, var(--cyan), transparent);
       animation: cardScanline 2.4s linear infinite;
     }
 
     @keyframes cardScanline {
-      0% { top: 0%; }
-      100% { top: 100%; }
+      0% {
+        top: 0%;
+      }
+
+      100% {
+        top: 100%;
+      }
     }
 
     .card-illus-txt {
@@ -395,7 +418,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* ─── AR Container (MindAR Canvas & Fullscreen Video) ─── */
@@ -478,8 +503,17 @@
     }
 
     @keyframes pulseDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.7); }
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.7);
+      }
     }
 
     .hud-brand-txt {
@@ -565,14 +599,38 @@
       border-style: solid;
     }
 
-    .reticle-tl { top: 0; left: 0; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
-    .reticle-tr { top: 0; right: 0; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
-    .reticle-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; border-radius: 0 0 4px 0; }
-    .reticle-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+    .reticle-tl {
+      top: 0;
+      left: 0;
+      border-width: 2px 0 0 2px;
+      border-radius: 4px 0 0 0;
+    }
+
+    .reticle-tr {
+      top: 0;
+      right: 0;
+      border-width: 2px 2px 0 0;
+      border-radius: 0 4px 0 0;
+    }
+
+    .reticle-bl {
+      bottom: 0;
+      left: 0;
+      border-width: 0 0 2px 2px;
+      border-radius: 0 0 4px 0;
+    }
+
+    .reticle-br {
+      bottom: 0;
+      right: 0;
+      border-width: 0 2px 2px 0;
+      border-radius: 0 0 4px 0;
+    }
 
     .reticle-laser {
       position: absolute;
-      left: 0; right: 0;
+      left: 0;
+      right: 0;
       height: 1.5px;
       background: linear-gradient(90deg, transparent, var(--cyan), transparent);
       box-shadow: 0 0 8px var(--cyan);
@@ -580,8 +638,13 @@
     }
 
     @keyframes laserSweep {
-      0% { top: 6%; }
-      100% { top: 94%; }
+      0% {
+        top: 6%;
+      }
+
+      100% {
+        top: 94%;
+      }
     }
 
     /* ─── AR Interactive Quick-Action HUD Dock (Bottom - Compact Height) ─── */
@@ -767,7 +830,7 @@
       max-width: 440px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
       position: relative;
     }
 
@@ -784,7 +847,7 @@
     }
 
     .modal-close-btn {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
       border: none;
       color: #fff;
       width: 32px;
@@ -800,7 +863,7 @@
     .target-modal-img {
       width: 100%;
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
     .target-modal-tip {
@@ -842,8 +905,15 @@
     }
 
     @keyframes modalSlideUp {
-      from { transform: translateY(24px) scale(0.96); opacity: 0; }
-      to { transform: translateY(0) scale(1); opacity: 1; }
+      from {
+        transform: translateY(24px) scale(0.96);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
     }
 
     .threat-modal-header {
@@ -1014,9 +1084,20 @@
       opacity: 1;
     }
 
-    .channel--wa:hover { border-color: #25D366; background: rgba(37, 211, 102, 0.12); }
-    .channel--ig:hover { border-color: #E1306C; background: rgba(225, 48, 108, 0.12); }
-    .channel--mail:hover { border-color: #EA4335; background: rgba(234, 67, 53, 0.12); }
+    .channel--wa:hover {
+      border-color: #25D366;
+      background: rgba(37, 211, 102, 0.12);
+    }
+
+    .channel--ig:hover {
+      border-color: #E1306C;
+      background: rgba(225, 48, 108, 0.12);
+    }
+
+    .channel--mail:hover {
+      border-color: #EA4335;
+      background: rgba(234, 67, 53, 0.12);
+    }
 
     .threat-primary-btn {
       display: flex;
@@ -1172,7 +1253,8 @@
   <!-- ─── Loading Screen ─── -->
   <div id="loading-screen">
     <div class="loading-logo-wrap">
-      <img src="../dv-logo.png" style="width:120px;height:auto;filter:drop-shadow(0 4px 12px rgba(56,189,248,0.3));" alt="Data Vigilantes" />
+      <img src="../dv-logo.png" style="width:120px;height:auto;filter:drop-shadow(0 4px 12px rgba(56,189,248,0.3));"
+        alt="Data Vigilantes" />
     </div>
     <div class="loading-title">Data Vigilantes</div>
     <div class="progress-wrap">
@@ -1279,12 +1361,14 @@
       <!-- User Education Footprint Report Banner -->
       <div class="threat-report-notice">
         <span class="threat-report-icon">🚨</span>
-        <span class="threat-report-text">Send us your email address to receive your free digital footprint report.</span>
+        <span class="threat-report-text">Send us your email address to receive your free digital footprint
+          report.</span>
       </div>
 
       <div class="threat-channels-grid">
         <!-- 1. WhatsApp -->
-        <a href="https://wa.me/917879884975?text=Hi%20Data%20Vigilantes,%20here%20is%20my%20email%20address%20for%20the%20free%20digital%20footprint%20report:" target="_blank" rel="noopener" class="threat-channel-item channel--wa">
+        <a href="https://wa.me/917879884975?text=Hi%20Data%20Vigilantes,%20here%20is%20my%20email%20address%20for%20the%20free%20digital%20footprint%20report:"
+          target="_blank" rel="noopener" class="threat-channel-item channel--wa">
           <div class="threat-channel-icon">
             <img src="../whatsapp.png" class="threat-channel-img" alt="WhatsApp" />
           </div>
@@ -1296,7 +1380,8 @@
         </a>
 
         <!-- 2. Instagram -->
-        <a href="https://www.instagram.com/datavigilantes" target="_blank" rel="noopener" class="threat-channel-item channel--ig">
+        <a href="https://www.instagram.com/datavigilantes" target="_blank" rel="noopener"
+          class="threat-channel-item channel--ig">
           <div class="threat-channel-icon">
             <img src="../instagram.png" class="threat-channel-img" alt="Instagram" />
           </div>
@@ -1308,7 +1393,8 @@
         </a>
 
         <!-- 3. Email -->
-        <a href="mailto:contact@datavigilantes.com?subject=Free%20Digital%20Footprint%20Report&body=Hi%20Data%20Vigilantes,%0A%0APlease%20find%20my%20email%20address%20below%20for%20the%20free%20digital%20footprint%20report:%0A%0A" class="threat-channel-item channel--mail">
+        <a href="mailto:contact@datavigilantes.com?subject=Free%20Digital%20Footprint%20Report&body=Hi%20Data%20Vigilantes,%0A%0APlease%20find%20my%20email%20address%20below%20for%20the%20free%20digital%20footprint%20report:%0A%0A"
+          class="threat-channel-item channel--mail">
           <div class="threat-channel-icon">
             <img src="../gmail.png" class="threat-channel-img" alt="Email" />
           </div>
@@ -1335,7 +1421,8 @@
     <div class="error-msg" id="error-msg">Please allow camera permissions in your browser to view the AR card.</div>
     <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
       <button class="error-btn" onclick="location.reload()">Try Again</button>
-      <button class="error-btn" style="background:linear-gradient(135deg,var(--cyan),var(--blue));" onclick="reveal3DCardDirect()">Explore 3D Hologram</button>
+      <button class="error-btn" style="background:linear-gradient(135deg,var(--cyan),var(--blue));"
+        onclick="reveal3DCardDirect()">Explore 3D Hologram</button>
     </div>
   </div>
 
@@ -1347,7 +1434,7 @@
         title: "Founder & CEO",
         phone: "+91 78798 84975",
         email: "founder@datavigilantes.com",
-        linkedin: "https://www.linkedin.com/company/datavigilantes",
+        linkedin: "https://www.linkedin.com/company/data-vigilantes",
         insta: "@datavigilantes",
         instaLink: "https://www.instagram.com/datavigilantes",
         photo: "../siddharth.jpg"
@@ -1418,7 +1505,7 @@
         const newUrl = new URL(window.location);
         newUrl.searchParams.set('user', userId);
         window.history.replaceState({}, '', newUrl);
-      } catch (e) {}
+      } catch (e) { }
     }
 
     updateDOMUI();
@@ -2453,7 +2540,7 @@
       if (videoDisplayGroup) videoDisplayGroup.visible = false;
       if (websiteVideo) {
         websiteVideo.pause();
-        try { websiteVideo.currentTime = 0; } catch (e) {}
+        try { websiteVideo.currentTime = 0; } catch (e) { }
       }
 
       // 7. Dismiss Threat Scan modal if open
@@ -2533,7 +2620,7 @@
 
       // Auto-play website preview video
       if (websiteVideo) {
-        websiteVideo.play().catch(() => {});
+        websiteVideo.play().catch(() => { });
       }
 
       // 6. Interactive OrbitControls and drag-tilt
@@ -2709,7 +2796,7 @@
           if (arRoot) arRoot.visible = true;
           if (servicesMenu) servicesMenu.visible = true;
           if (videoDisplayGroup) videoDisplayGroup.visible = true;
-          if (websiteVideo) websiteVideo.play().catch(() => {});
+          if (websiteVideo) websiteVideo.play().catch(() => { });
 
           // Robotic "Card Detected" Audio Feedback (Web Speech API)
           try {
@@ -2809,7 +2896,7 @@
       if (arRoot) arRoot.visible = true;
       if (servicesMenu) servicesMenu.visible = true;
       if (videoDisplayGroup) videoDisplayGroup.visible = true;
-      if (websiteVideo) websiteVideo.play().catch(() => {});
+      if (websiteVideo) websiteVideo.play().catch(() => { });
 
       // Robotic "Card Detected" Audio Feedback (Web Speech API)
       try {
@@ -2882,14 +2969,14 @@
         try {
           mindarThree.stop();
           mindarThree.renderer.setAnimationLoop(null);
-        } catch (e) {}
+        } catch (e) { }
         arRunning = false;
       }
 
       // 4. Pause video
       if (websiteVideo) {
         websiteVideo.pause();
-        try { websiteVideo.currentTime = 0; } catch (e) {}
+        try { websiteVideo.currentTime = 0; } catch (e) { }
       }
 
       // 5. Reset DOM UI
